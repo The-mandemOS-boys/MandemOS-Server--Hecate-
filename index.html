@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hecate — Voice Assistant</title>
+</head>
+<body style="font-family: sans-serif; padding: 2em;">
+  <h1>🕯️ Talk to Hecate</h1>
+  <button onclick="startListening()">🎤 Speak</button>
+  <p id="transcript"></p>
+  <p><strong>Hecate:</strong> <span id="response"></span></p>
+
+  <script>
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+
+      recognition.onresult = async function(event) {
+        const text = event.results[0][0].transcript;
+        document.getElementById("transcript").innerText = `You: ${text}`;
+
+        const res = await fetch("http://localhost:8080/talk", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await res.json();
+        const reply = data.reply;
+        document.getElementById("response").innerText = reply;
+        speak(reply);
+      };
+
+      recognition.onerror = function(err) {
+        alert("Error: " + err.error);
+      };
+
+      recognition.start();
+    }
+
+    function speak(text) {
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = text;
+      msg.lang = "en-US";
+      window.speechSynthesis.speak(msg);
+    }
+  </script>
+</body>
+</html>
