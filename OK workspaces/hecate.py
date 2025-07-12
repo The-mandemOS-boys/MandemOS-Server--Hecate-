@@ -39,6 +39,10 @@ class Hecate:
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
 
+        elif user_input.startswith("selfupdate:"):
+            code_snippet = user_input.split("selfupdate:", 1)[1].strip()
+            return self._self_update(code_snippet)
+
         elif "code" in user_input.lower() and self.coder:
             return f"{self.name}: What kind of code would you like me to write for you?"
 
@@ -100,3 +104,13 @@ class Hecate:
             return response
         except Exception as e:
             return f"{self.name}: I ran into an issue while searching:\n{e}"
+
+    def _self_update(self, code_snippet):
+        """Append a code snippet to my own source file."""
+        try:
+            my_path = os.path.abspath(__file__)
+            with open(my_path, "a") as f:
+                f.write("\n" + code_snippet + "\n")
+            return f"{self.name}: I've added the provided code to my source file."
+        except Exception as e:
+            return f"{self.name}: Failed to update myself:\n{e}"
