@@ -1,10 +1,11 @@
-# Hecate-v3
 
-This simple project exposes a small voice assistant named **Hecate**. The
-assistant can remember short facts, load and run code snippets and even modify
-her own source file.
+# Hecate-Auto
 
-### Self update
+> The daemon who codes, commits, and controls the flame of your GitHub repo.
 
-Send a message starting with `selfupdate:` followed by Python code and Hecate
-will append that snippet to `hecate.py`.
+### Usage
+1. Place your GitHub token in `config.json`
+2. Run `node hecate-auto.js`
+3. It will commit code into your repo automatically
+
+This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
