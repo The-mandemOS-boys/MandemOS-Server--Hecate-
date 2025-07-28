@@ -9,8 +9,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Instantiate Hecate
-hecate = Hecate()
+# Hecate instance will be created in __main__ after parsing args
+hecate = None
 
 
 def run_server():
@@ -19,6 +19,7 @@ def run_server():
 
 @app.route("/talk", methods=["POST"])
 def talk():
+    global hecate
     data = request.json
     user_input = data.get("message", "")
     response = hecate.respond(user_input)
@@ -32,11 +33,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Run the front end API server in the background",
     )
+    parser.add_argument(
+        "--speak",
+        action="store_true",
+        help="Enable voice output on the server",
+    )
     args = parser.parse_args()
+
+    hecate = Hecate(speak=args.speak)
 
     if args.background:
         # Relaunch this script detached from the current session
         cmd = [sys.executable, os.path.abspath(__file__)]
+        if args.speak:
+            cmd.append("--speak")
         subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
