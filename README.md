@@ -12,7 +12,7 @@
    }
    ```
 2. Run `node hecate-auto.js`
-3. It will commit and push code to your repo automatically
+3. It will pull the latest changes and then commit and push code to your repo automatically
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 

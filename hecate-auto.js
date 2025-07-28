@@ -28,4 +28,5 @@ try {
 }
 
 const url = remote.replace('https://', `https://${token}@`);
+run(`git pull ${url} --rebase`);
 run(`git push ${url}`);
