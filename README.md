@@ -47,10 +47,11 @@ You can also click **Summarize Memory** to get a short summary of all remembered
    pip install -r requirements.txt
    ```
 
-2. Start the local API server:
+2. Start the local API server (add `-b` to run in the background):
 
    ```bash
-   python "OK workspaces/main.py"
+   python "OK workspaces/main.py"    # foreground
+   python "OK workspaces/main.py" -b # background
    ```
 
 3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.
