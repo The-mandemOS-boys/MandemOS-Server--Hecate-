@@ -30,10 +30,26 @@ export OPENAI_API_KEY=your_api_key
 # Option 2: place the key in openai_key.txt
 echo your_api_key > openai_key.txt
 
-python "OK workspaces/main. py"
+python "OK workspaces/main.py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.
+
+### Run Locally
+
+1. Install Python dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. Start the local API server:
+
+   ```bash
+   python "OK workspaces/main.py"
+   ```
+
+3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.
 
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:
