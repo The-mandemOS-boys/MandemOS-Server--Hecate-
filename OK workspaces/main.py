@@ -6,6 +6,9 @@ import subprocess
 import sys
 import os
 import speech_recognition as sr
+from speech import speak
+
+SPEAK_RESPONSES = os.getenv("SPEAK_RESPONSES", "false").lower() in ("1", "true", "yes")
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +31,8 @@ def talk():
     data = request.json
     user_input = data.get("message", "")
     response = hecate.respond(user_input)
+    if SPEAK_RESPONSES:
+        speak(response)
     try:
         with open("conversation.log", "a") as log:
             log.write(f"User: {user_input}\n")
@@ -51,6 +56,8 @@ def talk_audio():
     except Exception as e:
         return jsonify({"error": f"Speech recognition failed: {e}"}), 400
     response = hecate.respond(text)
+    if SPEAK_RESPONSES:
+        speak(response)
     return jsonify({"transcript": text, "reply": response})
 
 if __name__ == "__main__":
