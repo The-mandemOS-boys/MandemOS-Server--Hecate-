@@ -160,4 +160,4 @@ This will start the API server directly from the zip file.
 Use `selfrepair:description` to attempt an automated fix of Hecate's own code based on the issue description. Similarly, `selfimprove:suggestion` asks Hecate to refactor itself with the provided suggestion. Both commands rely on your OpenAI API key and create a `.bak` backup of the current source before overwriting it if successful.
 
 ### Antivirus Scanning
-Run `antivirus.py` to periodically scan the `scripts/` directory for infected files using `clamscan`. Any detected threats are moved to the `quarantine/` folder. Ensure ClamAV is installed so the scan can run successfully.
+Run `antivirus.py` to periodically scan the `scripts/` directory for infected files using `clamscan`. The script also attempts to keep the ClamAV virus definitions up to date by calling `freshclam` at regular intervals. Any detected threats are moved to the `quarantine/` folder. Ensure both `clamscan` and `freshclam` are installed so the scan and updates can run successfully.
