@@ -22,11 +22,12 @@
   <button onclick="sendText()">Send</button>
   <p id="transcript"></p>
   <p id="location"></p>
-  <input type="text" id="emailInput" placeholder="Email address" />
-  <button onclick="getLocation()">📍 Get Location</button>
-  <button onclick="emailLocation()">Email Location</button>
-  <button onclick="summarizeMemory()">Summarize Memory</button>
-  <p><strong>Hecate:</strong> <span id="response"></span></p>
+    <input type="text" id="emailInput" placeholder="Email address" />
+    <button onclick="getLocation()">📍 Get Location</button>
+    <button onclick="emailLocation()">Email Location</button>
+    <button onclick="summarizeMemory()">Summarize Memory</button>
+    <button onclick="exitWindow()">❌ Exit</button>
+    <p><strong>Hecate:</strong> <span id="response"></span></p>
 
   <script>
     function startListening() {
@@ -138,6 +139,10 @@
         sendText();
       }
     });
+
+    function exitWindow() {
+      window.close();
+    }
   </script>
 </body>
 </html>
