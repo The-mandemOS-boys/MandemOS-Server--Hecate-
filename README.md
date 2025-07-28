@@ -4,9 +4,15 @@
 > The daemon who codes, commits, and controls the flame of your GitHub repo.
 
 ### Usage
-1. Place your GitHub token in `config.json`
+1. Create a `config.json` file with your GitHub token and remote URL:
+   ```json
+   {
+     "token": "YOUR_GITHUB_TOKEN",
+     "remote": "https://github.com/username/repo.git"
+   }
+   ```
 2. Run `node hecate-auto.js`
-3. It will commit code into your repo automatically
+3. It will commit and push code to your repo automatically
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
