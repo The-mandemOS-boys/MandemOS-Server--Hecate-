@@ -138,6 +138,10 @@ class Hecate:
             except Exception:
                 return f"{self.name}: Use 'location:lat|lon|email'"
 
+        elif user_input.startswith("learn:"):
+            content = user_input.split("learn:", 1)[1].strip()
+            return self._learn_from_text(content)
+
         elif any(p in user_input.lower() for p in self.distress_phrases) or "alika in distress" in user_input.lower():
             to = os.getenv("DISTRESS_EMAIL")
             if not self.current_location:
@@ -195,6 +199,26 @@ class Hecate:
             return f"{self.name}: {summary}"
         except Exception as e:
             return f"{self.name}: Failed to summarize memory:\n{e}"
+
+    def _learn_from_text(self, content):
+        """Generate key takeaways from text and store them in memory."""
+        if not content:
+            return f"{self.name}: No text provided to learn from."
+        try:
+            prompt = (
+                "Extract the key lessons or facts from the following text in short bullet points:"\
+                f"\n{content}"
+            )
+            resp = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}],
+            )
+            summary = resp.choices[0].message["content"].strip()
+            with open(self.memory_file, "a") as f:
+                f.write(summary + "\n")
+            return f"{self.name}: I've noted the key points."
+        except Exception as e:
+            return f"{self.name}: Failed to learn from text:\n{e}"
 
     def _save_code(self, filename):
         if not self.last_code:
