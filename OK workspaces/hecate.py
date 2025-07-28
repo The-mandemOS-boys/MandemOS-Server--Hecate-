@@ -97,6 +97,17 @@ class Hecate:
             except ValueError:
                 return f"{self.name}: Use 'move:src|dest'"
 
+        elif user_input.strip() == "list":
+            return self._list_files()
+
+        elif user_input.startswith("read:"):
+            filename = user_input.split("read:", 1)[1].strip()
+            return self._read_file(filename)
+
+        elif user_input.startswith("delete:"):
+            filename = user_input.split("delete:", 1)[1].strip()
+            return self._delete_file(filename)
+
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
@@ -233,6 +244,36 @@ class Hecate:
             return f"{self.name}: Moved {src} to {dest}."
         except Exception as e:
             return f"{self.name}: Failed to move file:\n{e}"
+
+    def _list_files(self):
+        path = "scripts"
+        try:
+            files = os.listdir(path)
+            if not files:
+                return f"{self.name}: No files found."
+            return "\n".join(files)
+        except Exception as e:
+            return f"{self.name}: Failed to list files:\n{e}"
+
+    def _read_file(self, filename):
+        path = os.path.join("scripts", filename)
+        try:
+            if not os.path.exists(path):
+                return f"{self.name}: {filename} not found."
+            with open(path, "r") as f:
+                return f.read()
+        except Exception as e:
+            return f"{self.name}: Failed to read file:\n{e}"
+
+    def _delete_file(self, filename):
+        path = os.path.join("scripts", filename)
+        try:
+            if not os.path.exists(path):
+                return f"{self.name}: {filename} not found."
+            os.remove(path)
+            return f"{self.name}: Deleted {filename}."
+        except Exception as e:
+            return f"{self.name}: Failed to delete file:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()
