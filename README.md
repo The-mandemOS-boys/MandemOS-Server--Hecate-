@@ -37,6 +37,7 @@ python "OK workspaces/main.py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.
+Choose a voice from the dropdown labeled "Voice" to hear Hecate reply aloud.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
 
 ### Run Locally
