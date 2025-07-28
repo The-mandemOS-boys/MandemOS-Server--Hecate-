@@ -17,10 +17,18 @@
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
 ### ChatGPT Integration
-Hecate can now send your text prompts to OpenAI's ChatGPT. Set the `OPENAI_API_KEY` environment variable before running the Flask server:
+Hecate can now send your text prompts to OpenAI's ChatGPT. By default it looks
+for the API key in the `OPENAI_API_KEY` environment variable. If that isn't
+present, it will attempt to load a key from a file named `openai_key.txt` in the
+repository root.
 
 ```bash
+# Option 1: environment variable
 export OPENAI_API_KEY=your_api_key
+
+# Option 2: place the key in openai_key.txt
+echo your_api_key > openai_key.txt
+
 python "OK workspaces/main. py"
 ```
 
