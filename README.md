@@ -128,6 +128,13 @@ To hear the responses spoken aloud, add the `--speak` flag (requires pyttsx3):
 python "OK workspaces/cli.py" --speak
 ```
 
+For a minimal text-only chat that simply prints each response on the screen, you can run:
+
+```bash
+python screen_chat.py
+```
+Add `--speak` to also vocalize the output with `espeak` if available.
+
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:
 
