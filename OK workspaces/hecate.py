@@ -35,6 +35,9 @@ class Hecate:
         self.personality = personality
         self.coder = coder
         self.memory_file = "memory.txt"
+        self.clone_log_file = "clone_messages.log"
+        self.shared_memory_file = "shared_memory.txt"
+        self.clone_id = os.getenv("CLONE_ID", os.uname().nodename)
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
@@ -141,6 +144,20 @@ class Hecate:
         elif user_input.startswith("learn:"):
             content = user_input.split("learn:", 1)[1].strip()
             return self._learn_from_text(content)
+
+        elif user_input.startswith("clone:send:"):
+            message = user_input.split("clone:send:", 1)[1].strip()
+            return self._clone_send(message)
+
+        elif user_input.strip() == "clone:read":
+            return self._clone_read()
+
+        elif user_input.startswith("clone:remember:"):
+            fact = user_input.split("clone:remember:", 1)[1].strip()
+            return self._clone_remember(fact)
+
+        elif user_input.strip() == "clone:memories":
+            return self._clone_memories()
 
         elif any(p in user_input.lower() for p in self.distress_phrases) or "alika in distress" in user_input.lower():
             to = os.getenv("DISTRESS_EMAIL")
@@ -376,6 +393,36 @@ class Hecate:
             return "\n\n".join(messages) if messages else f"{self.name}: No emails found."
         except Exception as e:
             return f"{self.name}: Failed to fetch emails:\n{e}"
+
+    def _clone_send(self, message):
+        try:
+            with open(self.clone_log_file, "a") as f:
+                f.write(f"{self.clone_id}: {message}\n")
+            return f"{self.name}: Message broadcast."
+        except Exception as e:
+            return f"{self.name}: Failed to send message:\n{e}"
+
+    def _clone_read(self):
+        if not os.path.exists(self.clone_log_file):
+            return f"{self.name}: No messages."
+        with open(self.clone_log_file, "r") as f:
+            data = f.read().strip()
+        return data if data else f"{self.name}: (no messages)"
+
+    def _clone_remember(self, fact):
+        try:
+            with open(self.shared_memory_file, "a") as f:
+                f.write(f"{self.clone_id}: {fact}\n")
+            return f"{self.name}: Shared memory stored."
+        except Exception as e:
+            return f"{self.name}: Failed to store memory:\n{e}"
+
+    def _clone_memories(self):
+        if not os.path.exists(self.shared_memory_file):
+            return f"{self.name}: No shared memories."
+        with open(self.shared_memory_file, "r") as f:
+            data = f.read().strip()
+        return data if data else f"{self.name}: (no memories)"
 
     def _chatgpt_response(self, text):
         try:
