@@ -6,6 +6,9 @@
 ### Server Administration
 Colby Atcheson is the server administrator. Update `server_admins.json` to grant additional admin access.
 
+### Admin Password
+Use `admin:<password>` to gain admin privileges. Check status with `admin:status` and revoke with `admin:logout`. The default password is `whostheboss` or can be overridden with the `ADMIN_PASSWORD` environment variable.
+
 ### Usage
 1. Create a `config.json` file with your GitHub token and remote URL:
    ```json
