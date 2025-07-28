@@ -38,6 +38,7 @@ python "OK workspaces/main.py"
 
 In the browser interface, type your message into the text box or use the voice button.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
+Pass `--speak` when starting the server if you want Hecate to vocalize replies using `pyttsx3`.
 
 ### Run Locally
 
@@ -52,6 +53,7 @@ You can also click **Summarize Memory** to get a short summary of all remembered
    ```bash
    python "OK workspaces/main.py"    # foreground
    python "OK workspaces/main.py" -b # background
+   python "OK workspaces/main.py" --speak   # with speech
    ```
 
 3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.

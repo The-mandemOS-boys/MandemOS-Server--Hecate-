@@ -8,6 +8,7 @@ import imaplib
 import email
 from email.mime.text import MIMEText
 import openai
+import pyttsx3
 
 
 def _load_openai_key():
@@ -30,77 +31,95 @@ openai.api_key = _load_openai_key()
 os.makedirs("scripts", exist_ok=True)
 
 class Hecate:
-    def __init__(self, name="Hecate", personality="bold and adaptive", coder=True):
+    def __init__(self, name="Hecate", personality="bold and adaptive", coder=True, speak=False):
         self.name = name
         self.personality = personality
         self.coder = coder
+        self.speak = speak
         self.memory_file = "memory.txt"
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
         self.current_location = None
+        self._tts_engine = None
+        if self.speak:
+            try:
+                self._tts_engine = pyttsx3.init()
+            except Exception:
+                self._tts_engine = None
+                self.speak = False
+
+    def _speak_text(self, text: str) -> None:
+        """Vocalize text if speaking is enabled."""
+        if self.speak and self._tts_engine:
+            try:
+                self._tts_engine.say(text)
+                self._tts_engine.runAndWait()
+            except Exception:
+                pass
 
     def respond(self, user_input):
+        response = None
         if user_input.startswith("remember:"):
             fact = user_input.split("remember:", 1)[1].strip()
-            return self._remember_fact(fact)
+            response = self._remember_fact(fact)
 
         elif user_input == "recall":
-            return self._recall_facts()
+            response = self._recall_facts()
 
         elif user_input == "summarize":
-            return self._summarize_memory()
+            response = self._summarize_memory()
 
         elif user_input.startswith("run:"):
             code = user_input.split("run:", 1)[1].strip()
             self.last_code = code
-            return self._run_code(code)
+            response = self._run_code(code)
 
         elif user_input.startswith("save:"):
             filename = user_input.split("save:", 1)[1].strip()
-            return self._save_code(filename)
+            response = self._save_code(filename)
 
         elif user_input.startswith("load:"):
             filename = user_input.split("load:", 1)[1].strip()
-            return self._load_and_run(filename)
+            response = self._load_and_run(filename)
 
         elif user_input.startswith("retrieve:"):
             try:
                 url, filename = user_input.split("retrieve:", 1)[1].split("|", 1)
-                return self._retrieve_file(url.strip(), filename.strip())
+                response = self._retrieve_file(url.strip(), filename.strip())
             except ValueError:
-                return f"{self.name}: Use 'retrieve:url|filename'"
+                response = f"{self.name}: Use 'retrieve:url|filename'"
 
         elif user_input.startswith("create:"):
             try:
                 parts = user_input.split("create:", 1)[1].split("|", 1)
                 filename = parts[0].strip()
                 content = parts[1] if len(parts) > 1 else ""
-                return self._create_file(filename, content)
+                response = self._create_file(filename, content)
             except Exception:
-                return f"{self.name}: Use 'create:filename|content'"
+                response = f"{self.name}: Use 'create:filename|content'"
 
         elif user_input.startswith("move:"):
             try:
                 src, dest = user_input.split("move:", 1)[1].split("|", 1)
-                return self._move_file(src.strip(), dest.strip())
+                response = self._move_file(src.strip(), dest.strip())
             except ValueError:
-                return f"{self.name}: Use 'move:src|dest'"
+                response = f"{self.name}: Use 'move:src|dest'"
 
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
-            return self._search_web(query)
+            response = self._search_web(query)
 
         elif user_input.startswith("selfupdate:"):
             code_snippet = user_input.split("selfupdate:", 1)[1].strip()
-            return self._self_update(code_snippet)
+            response = self._self_update(code_snippet)
 
         elif user_input.startswith("email:"):
             try:
                 to, subject, body = user_input.split("email:", 1)[1].split("|", 2)
-                return self._send_email(to.strip(), subject.strip(), body.strip())
+                response = self._send_email(to.strip(), subject.strip(), body.strip())
             except ValueError:
-                return f"{self.name}: Use 'email:recipient|subject|body'"
+                response = f"{self.name}: Use 'email:recipient|subject|body'"
 
         elif user_input.startswith("location:"):
             try:
@@ -112,34 +131,41 @@ class Hecate:
                     to = parts[2].strip()
                     subject = "Location Data"
                     body = f"Latitude: {lat}\nLongitude: {lon}"
-                    return self._send_email(to, subject, body)
-                return f"{self.name}: Location tagged at {lat}, {lon}."
+                    response = self._send_email(to, subject, body)
+                else:
+                    response = f"{self.name}: Location tagged at {lat}, {lon}."
             except Exception:
-                return f"{self.name}: Use 'location:lat|lon|email'"
+                response = f"{self.name}: Use 'location:lat|lon|email'"
 
         elif "alika in distress" in user_input.lower():
             to = os.getenv("DISTRESS_EMAIL")
             if not self.current_location:
-                return f"{self.name}: No location available."
-            if not to:
-                return f"{self.name}: No emergency contact configured."
-            lat, lon = self.current_location
-            subject = "Distress Location"
-            body = f"Latitude: {lat}\nLongitude: {lon}"
-            return self._send_email(to, subject, body)
+                response = f"{self.name}: No location available."
+            elif not to:
+                response = f"{self.name}: No emergency contact configured."
+            else:
+                lat, lon = self.current_location
+                subject = "Distress Location"
+                body = f"Latitude: {lat}\nLongitude: {lon}"
+                response = self._send_email(to, subject, body)
 
         elif user_input.startswith("inbox"):
             try:
                 count = int(user_input.split(":", 1)[1]) if ":" in user_input else 5
             except ValueError:
                 count = 5
-            return self._fetch_emails(count)
+            response = self._fetch_emails(count)
 
         elif "code" in user_input.lower() and self.coder:
-            return f"{self.name}: What kind of code would you like me to write for you?"
+            response = f"{self.name}: What kind of code would you like me to write for you?"
 
         else:
-            return self._chatgpt_response(user_input)
+            response = self._chatgpt_response(user_input)
+
+        if response is None:
+            response = ""
+        self._speak_text(response)
+        return response
 
     def _remember_fact(self, fact):
         with open(self.memory_file, "a") as f:
