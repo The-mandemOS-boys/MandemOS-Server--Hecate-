@@ -11,24 +11,24 @@
 
   <script>
     function startListening() {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        const text = prompt("Speech recognition unsupported. Type your request:");
+        if (text) {
+          document.getElementById("transcript").innerText = `You: ${text}`;
+          sendMessage(text);
+        }
+        return;
+      }
+      const recognition = new SpeechRecognition();
       recognition.lang = 'en-US';
       recognition.interimResults = false;
 
-      recognition.onresult = async function(event) {
+      recognition.onresult = function(event) {
         const text = event.results[0][0].transcript;
         document.getElementById("transcript").innerText = `You: ${text}`;
 
-        const res = await fetch("http://localhost:8080/talk", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ message: text })
-        });
-
-        const data = await res.json();
-        const reply = data.reply;
-        document.getElementById("response").innerText = reply;
-        speak(reply);
+        sendMessage(text);
       };
 
       recognition.onerror = function(err) {
@@ -36,6 +36,20 @@
       };
 
       recognition.start();
+    }
+
+    function sendMessage(text) {
+      fetch("/talk", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const reply = data.reply;
+        document.getElementById("response").innerText = reply;
+        speak(reply);
+      });
     }
 
     function speak(text) {
