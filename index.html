@@ -20,6 +20,7 @@
   <button onclick="startListening()">🎤 Speak</button>
   <input type="text" id="textInput" placeholder="Type your message"/>
   <button onclick="sendText()">Send</button>
+  <div id="log" style="white-space: pre-line; margin-bottom: 1em;"></div>
   <p id="transcript"></p>
   <p id="location"></p>
     <input type="text" id="emailInput" placeholder="Email address" />
@@ -38,6 +39,8 @@
       recognition.onresult = async function(event) {
         const text = event.results[0][0].transcript;
         document.getElementById("transcript").innerText = `You: ${text}`;
+        const logEl = document.getElementById("log");
+        logEl.innerText += `You: ${text}\n`;
 
         const res = await fetch("http://localhost:8080/talk", {
           method: "POST",
@@ -48,6 +51,7 @@
         const data = await res.json();
         const reply = data.reply;
         document.getElementById("response").innerText = reply;
+        logEl.innerText += `${reply}\n`;
         speak(reply);
       };
 
@@ -121,6 +125,8 @@
       inputEl.value = "";
       inputEl.focus();
       document.getElementById("transcript").innerText = `You: ${text}`;
+      const logEl = document.getElementById("log");
+      logEl.innerText += `You: ${text}\n`;
 
       const res = await fetch("http://localhost:8080/talk", {
         method: "POST",
@@ -131,6 +137,7 @@
       const data = await res.json();
       const reply = data.reply;
       document.getElementById("response").innerText = reply;
+      logEl.innerText += `${reply}\n`;
       speak(reply);
     }
 
