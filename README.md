@@ -73,3 +73,18 @@ Use `move:src|dest` to move or rename files within the `scripts/` folder.
 ### Location Tagging
 Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
 The web interface provides buttons to fetch your coordinates and send them via email.
+
+### Running from a zipped archive
+You can bundle Hecate into a single executable zip using Python's `zipapp` module. First make sure `__main__.py` is present (it runs the server). Create the archive:
+
+```bash
+python -m zipapp . -p '/usr/bin/env python3' -o hecate.pyz
+```
+
+Run it with:
+
+```bash
+python hecate.pyz
+```
+
+This will start the API server directly from the zip file.
