@@ -17,10 +17,11 @@
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
 ### Memory Tools
-Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered.
-Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
+Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered. Facts that you remember are automatically written to the shared clone memory so each instance keeps the same notes.
+Use `learn:some text` to extract key bullet points from the provided content and append them to memory. These key points are also propagated to the shared memory automatically.
 Use `clone:send:message` to broadcast a message to other running clones. They can read all messages with `clone:read`.
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
+This seamless sharing of notes and lessons creates an autonomous connective learning network across every clone.
 
 ### ChatGPT Integration
 Hecate can now send your text prompts to OpenAI's ChatGPT. By default it uses

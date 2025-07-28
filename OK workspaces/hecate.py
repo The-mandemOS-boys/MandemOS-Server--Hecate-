@@ -221,6 +221,11 @@ class Hecate:
     def _remember_fact(self, fact):
         with open(self.memory_file, "a") as f:
             f.write(fact + "\n")
+        try:
+            with open(self.shared_memory_file, "a") as f:
+                f.write(f"{self.clone_id}: {fact}\n")
+        except Exception:
+            pass
         return f"{self.name}: Got it. I’ll remember that."
 
     def _recall_facts(self):
@@ -268,7 +273,12 @@ class Hecate:
             summary = resp.choices[0].message["content"].strip()
             with open(self.memory_file, "a") as f:
                 f.write(summary + "\n")
-            return f"{self.name}: I've noted the key points."
+            try:
+                with open(self.shared_memory_file, "a") as f:
+                    f.write(summary + "\n")
+            except Exception:
+                pass
+            return f"{self.name}: I've noted the key points and shared them."
         except Exception as e:
             return f"{self.name}: Failed to learn from text:\n{e}"
 
