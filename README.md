@@ -21,8 +21,9 @@ Use `remember:your fact` to store a memory and `recall` to read them back. The c
 Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
 
 ### ChatGPT Integration
-Hecate can now send your text prompts to OpenAI's ChatGPT. It uses the `gpt-4o`
-model for generating replies. By default it looks
+Hecate can now send your text prompts to OpenAI's ChatGPT. By default it uses
+the `gpt-4o` model, but you can select any available GPT model by setting the
+`OPENAI_MODEL` environment variable. The script looks
 for the API key in the `OPENAI_API_KEY` environment variable. If that isn't
 present, it will attempt to load a key from a file named `openai_key.txt` in the
 repository root.
@@ -30,6 +31,8 @@ repository root.
 ```bash
 # Option 1: environment variable
 export OPENAI_API_KEY=your_api_key
+# Optional: choose a specific model
+export OPENAI_MODEL=gpt-3.5-turbo
 
 # Option 2: place the key in openai_key.txt
 echo your_api_key > openai_key.txt

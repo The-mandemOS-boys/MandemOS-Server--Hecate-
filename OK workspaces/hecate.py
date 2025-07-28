@@ -9,6 +9,9 @@ import email
 from email.mime.text import MIMEText
 import openai
 
+# Allow overriding the OpenAI model via environment variable. Default to gpt-4o
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
+
 
 def _load_openai_key():
     """Fetch the OpenAI API key from env or local file."""
@@ -192,7 +195,7 @@ class Hecate:
                 f"\n{facts}"
             )
             resp = openai.ChatCompletion.create(
-                model="gpt-4o",
+                model=OPENAI_MODEL,
                 messages=[{"role": "user", "content": prompt}],
             )
             summary = resp.choices[0].message["content"].strip()
@@ -210,7 +213,7 @@ class Hecate:
                 f"\n{content}"
             )
             resp = openai.ChatCompletion.create(
-                model="gpt-4o",
+                model=OPENAI_MODEL,
                 messages=[{"role": "user", "content": prompt}],
             )
             summary = resp.choices[0].message["content"].strip()
@@ -380,7 +383,7 @@ class Hecate:
     def _chatgpt_response(self, text):
         try:
             resp = openai.ChatCompletion.create(
-                model="gpt-4o",
+                model=OPENAI_MODEL,
                 messages=[{"role": "user", "content": text}]
             )
             answer = resp.choices[0].message["content"].strip()
