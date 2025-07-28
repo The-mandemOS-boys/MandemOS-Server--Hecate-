@@ -58,10 +58,27 @@
       recognition.start();
     }
 
+  let irishVoice = null;
+  function selectIrishVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    irishVoice = voices.find(v => (/en-IE/i.test(v.lang) && /female|Moira/i.test(v.name))) ||
+                 voices.find(v => /Moira/i.test(v.name)) ||
+                 voices.find(v => /en-IE/i.test(v.lang)) || null;
+  }
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = selectIrishVoice;
+  }
+  selectIrishVoice();
+
   function speak(text) {
     const msg = new SpeechSynthesisUtterance();
     msg.text = text;
-    msg.lang = "en-US";
+    if (irishVoice) {
+      msg.voice = irishVoice;
+      msg.lang = irishVoice.lang;
+    } else {
+      msg.lang = "en-IE";
+    }
     window.speechSynthesis.speak(msg);
   }
 
