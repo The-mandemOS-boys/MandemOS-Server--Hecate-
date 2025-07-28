@@ -3,6 +3,9 @@ import io
 import os
 import requests
 from bs4 import BeautifulSoup
+import openai
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 os.makedirs("scripts", exist_ok=True)
 
@@ -47,7 +50,7 @@ class Hecate:
             return f"{self.name}: What kind of code would you like me to write for you?"
 
         else:
-            return f"{self.name}: (In a {self.personality} tone) You said: \"{user_input}\""
+            return self._chatgpt_response(user_input)
 
     def _remember_fact(self, fact):
         with open(self.memory_file, "a") as f:
@@ -114,3 +117,14 @@ class Hecate:
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
+
+    def _chatgpt_response(self, text):
+        try:
+            resp = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": text}]
+            )
+            answer = resp.choices[0].message["content"].strip()
+            return f"{self.name}: {answer}"
+        except Exception as e:
+            return f"{self.name}: Error contacting ChatGPT:\n{e}"
