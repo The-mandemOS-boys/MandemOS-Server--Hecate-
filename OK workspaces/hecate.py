@@ -61,6 +61,13 @@ class Hecate:
             filename = user_input.split("load:", 1)[1].strip()
             return self._load_and_run(filename)
 
+        elif user_input.startswith("retrieve:"):
+            try:
+                url, filename = user_input.split("retrieve:", 1)[1].split("|", 1)
+                return self._retrieve_file(url.strip(), filename.strip())
+            except ValueError:
+                return f"{self.name}: Use 'retrieve:url|filename'"
+
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
@@ -132,6 +139,17 @@ class Hecate:
             code = f.read()
         self.last_code = code
         return self._run_code(code)
+
+    def _retrieve_file(self, url, filename):
+        path = os.path.join("scripts", filename)
+        try:
+            res = requests.get(url, timeout=10)
+            res.raise_for_status()
+            with open(path, "wb") as f:
+                f.write(res.content)
+            return f"{self.name}: File saved as {filename}."
+        except Exception as e:
+            return f"{self.name}: Failed to retrieve file:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()
