@@ -59,6 +59,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     bot = Hecate()
+    intro = bot.startup_message()
+    if intro:
+        print(intro)
+        if args.speak:
+            speak(intro)
     if args.voice:
         voice_chat(bot, speak_output=args.speak)
     else:

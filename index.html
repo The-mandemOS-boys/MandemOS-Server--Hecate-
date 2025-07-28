@@ -199,7 +199,25 @@
     function exitWindow() {
       window.close();
     }
-    window.addEventListener('DOMContentLoaded', getLocation);
+    window.addEventListener('DOMContentLoaded', () => {
+      getLocation();
+      fetch('http://localhost:8080/talk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: '' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const intro = data.reply;
+        document.getElementById("response").innerText = intro;
+        speak(intro);
+      })
+      .catch(() => {
+        const intro = 'Hecate: Who are you?';
+        document.getElementById("response").innerText = intro;
+        speak(intro);
+      });
+    });
   </script>
 </body>
 </html>

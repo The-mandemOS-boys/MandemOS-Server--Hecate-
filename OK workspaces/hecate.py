@@ -39,6 +39,8 @@ class Hecate:
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
         self.current_location = None
+        self.user_name = None
+        self._asked_identity = False
         self.distress_phrases = [
             "help",
             "help me",
@@ -50,7 +52,25 @@ class Hecate:
             "leave me alone",
         ]
 
+    def startup_message(self):
+        """Return the initial prompt asking for the user's identity."""
+        if not self._asked_identity:
+            self._asked_identity = True
+            return f"{self.name}: Who are you?"
+        return None
+
     def respond(self, user_input):
+        if not self._asked_identity:
+            # If startup_message was never retrieved, ask for user's identity now
+            self._asked_identity = True
+            return f"{self.name}: Who are you?"
+
+        if self.user_name is None:
+            # Treat the first user response as their name
+            self.user_name = user_input.strip() or None
+            if self.user_name:
+                return f"{self.name}: Nice to meet you, {self.user_name}."
+
         if user_input.startswith("remember:"):
             fact = user_input.split("remember:", 1)[1].strip()
             return self._remember_fact(fact)
