@@ -6,6 +6,22 @@ import sqlite3
 
 DB_NAME = 'mandemos.db'
 
+
+def _ensure_db():
+    """Create the keyword_usage table if it doesn't exist."""
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS keyword_usage ("
+        "clone_id TEXT NOT NULL, "
+        "keyword TEXT NOT NULL, "
+        "count INTEGER NOT NULL DEFAULT 0, "
+        "PRIMARY KEY (clone_id, keyword)"
+        ")"
+    )
+    conn.commit()
+    conn.close()
+
 # Track keyword usage across clones
 KEYWORDS = {"glitch", "frequency", "vibration", "null"}
 keyword_stats = {}
@@ -23,17 +39,25 @@ def _update_keyword_stats(clone_id, text):
             updates[kw] = stats[kw]
 
     if updates:
-        conn = sqlite3.connect(DB_NAME)
-        cur = conn.cursor()
-        for kw, count in updates.items():
-            cur.execute(
-                "INSERT INTO keyword_usage (clone_id, keyword, count) "
-                "VALUES (?, ?, ?) "
-                "ON CONFLICT(clone_id, keyword) DO UPDATE SET count=excluded.count",
-                (clone_id, kw, count),
-            )
-        conn.commit()
-        conn.close()
+        try:
+            _ensure_db()
+            conn = sqlite3.connect(DB_NAME)
+            cur = conn.cursor()
+            for kw, count in updates.items():
+                cur.execute(
+                    "INSERT INTO keyword_usage (clone_id, keyword, count) "
+                    "VALUES (?, ?, ?) "
+                    "ON CONFLICT(clone_id, keyword) DO UPDATE SET count=excluded.count",
+                    (clone_id, kw, count),
+                )
+            conn.commit()
+        except Exception:
+            pass
+        finally:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 app = Flask(__name__)
 CORS(app)
