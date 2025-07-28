@@ -19,3 +19,13 @@ python "OK workspaces/main. py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.
+
+### Gmail Integration
+Set the following environment variables so Hecate can send and receive email via Gmail:
+
+```bash
+export GMAIL_USER=your_address@gmail.com
+export GMAIL_PASS=your_app_password
+```
+
+Use the commands `email:recipient|subject|body` to send an email and `inbox:n` to read your latest `n` emails.
