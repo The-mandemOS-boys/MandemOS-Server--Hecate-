@@ -71,6 +71,12 @@ You can also enable speech-to-text input with the `--voice` flag (requires a mic
 python "OK workspaces/cli.py" --voice
 ```
 
+To hear the responses spoken aloud, add the `--speak` flag (requires pyttsx3):
+
+```bash
+python "OK workspaces/cli.py" --speak
+```
+
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:
 
