@@ -111,3 +111,6 @@ python hecate.pyz
 ```
 
 This will start the API server directly from the zip file.
+
+### Self Repair and Improvement
+Use `selfrepair:description` to attempt an automated fix of Hecate's own code based on the issue description. Similarly, `selfimprove:suggestion` asks Hecate to refactor itself with the provided suggestion. Both commands rely on your OpenAI API key and will overwrite the current source file if successful.
