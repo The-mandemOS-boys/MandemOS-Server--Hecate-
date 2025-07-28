@@ -38,6 +38,7 @@ python "OK workspaces/main.py"
 
 In the browser interface, type your message into the text box or use the voice button.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
+When running the local server, Hecate will also speak her replies aloud using `pyttsx3`.
 
 ### Run Locally
 

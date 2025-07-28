@@ -9,8 +9,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Instantiate Hecate
-hecate = Hecate()
+# Instantiate Hecate with speech enabled
+hecate = Hecate(speak=True)
 
 
 def run_server():
