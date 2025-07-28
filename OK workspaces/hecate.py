@@ -3,6 +3,10 @@ import io
 import os
 import requests
 from bs4 import BeautifulSoup
+import smtplib
+import imaplib
+import email
+from email.mime.text import MIMEText
 import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,6 +20,8 @@ class Hecate:
         self.coder = coder
         self.memory_file = "memory.txt"
         self.last_code = ""
+        self.gmail_user = os.getenv("GMAIL_USER")
+        self.gmail_pass = os.getenv("GMAIL_PASS")
 
     def respond(self, user_input):
         if user_input.startswith("remember:"):
@@ -45,6 +51,20 @@ class Hecate:
         elif user_input.startswith("selfupdate:"):
             code_snippet = user_input.split("selfupdate:", 1)[1].strip()
             return self._self_update(code_snippet)
+
+        elif user_input.startswith("email:"):
+            try:
+                to, subject, body = user_input.split("email:", 1)[1].split("|", 2)
+                return self._send_email(to.strip(), subject.strip(), body.strip())
+            except ValueError:
+                return f"{self.name}: Use 'email:recipient|subject|body'"
+
+        elif user_input.startswith("inbox"):
+            try:
+                count = int(user_input.split(":", 1)[1]) if ":" in user_input else 5
+            except ValueError:
+                count = 5
+            return self._fetch_emails(count)
 
         elif "code" in user_input.lower() and self.coder:
             return f"{self.name}: What kind of code would you like me to write for you?"
@@ -117,6 +137,47 @@ class Hecate:
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
+
+    def _send_email(self, to_addr, subject, body):
+        if not (self.gmail_user and self.gmail_pass):
+            return f"{self.name}: Gmail credentials not configured."
+        try:
+            msg = MIMEText(body)
+            msg["Subject"] = subject
+            msg["From"] = self.gmail_user
+            msg["To"] = to_addr
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(self.gmail_user, self.gmail_pass)
+                server.sendmail(self.gmail_user, [to_addr], msg.as_string())
+            return f"{self.name}: Email sent to {to_addr}."
+        except Exception as e:
+            return f"{self.name}: Failed to send email:\n{e}"
+
+    def _fetch_emails(self, count=5):
+        if not (self.gmail_user and self.gmail_pass):
+            return f"{self.name}: Gmail credentials not configured."
+        try:
+            with imaplib.IMAP4_SSL("imap.gmail.com") as imap:
+                imap.login(self.gmail_user, self.gmail_pass)
+                imap.select("inbox")
+                typ, data = imap.search(None, "ALL")
+                if typ != 'OK':
+                    return f"{self.name}: Unable to fetch emails."
+                ids = data[0].split()
+                latest_ids = ids[-count:]
+                messages = []
+                for i in reversed(latest_ids):
+                    typ, msg_data = imap.fetch(i, "(RFC822)")
+                    if typ != 'OK':
+                        continue
+                    msg = email.message_from_bytes(msg_data[0][1])
+                    subj = msg.get("Subject", "(no subject)")
+                    frm = msg.get("From", "(unknown)")
+                    messages.append(f"From: {frm}\nSubject: {subj}")
+                imap.close()
+            return "\n\n".join(messages) if messages else f"{self.name}: No emails found."
+        except Exception as e:
+            return f"{self.name}: Failed to fetch emails:\n{e}"
 
     def _chatgpt_response(self, text):
         try:
