@@ -41,6 +41,7 @@ class Hecate:
         self.clone_log_file = "clone_messages.log"
         self.shared_memory_file = "shared_memory.txt"
         self.clone_id = os.getenv("CLONE_ID", os.uname().nodename)
+        self.clone_server = os.getenv("CLONE_SERVER_URL")
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
@@ -482,6 +483,17 @@ class Hecate:
             return f"{self.name}: Failed to fetch emails:\n{e}"
 
     def _clone_send(self, message):
+        if self.clone_server:
+            try:
+                resp = requests.post(
+                    f"{self.clone_server}/send",
+                    json={"id": self.clone_id, "message": message},
+                    timeout=5,
+                )
+                if resp.ok:
+                    return f"{self.name}: Message broadcast."
+            except Exception:
+                pass
         try:
             with open(self.clone_log_file, "a") as f:
                 f.write(f"{self.clone_id}: {message}\n")
@@ -490,6 +502,14 @@ class Hecate:
             return f"{self.name}: Failed to send message:\n{e}"
 
     def _clone_read(self):
+        if self.clone_server:
+            try:
+                resp = requests.get(f"{self.clone_server}/read", timeout=5)
+                if resp.ok:
+                    data = resp.text.strip()
+                    return data if data else f"{self.name}: (no messages)"
+            except Exception:
+                pass
         if not os.path.exists(self.clone_log_file):
             return f"{self.name}: No messages."
         with open(self.clone_log_file, "r") as f:
@@ -497,6 +517,17 @@ class Hecate:
         return data if data else f"{self.name}: (no messages)"
 
     def _clone_remember(self, fact):
+        if self.clone_server:
+            try:
+                resp = requests.post(
+                    f"{self.clone_server}/remember",
+                    json={"id": self.clone_id, "fact": fact},
+                    timeout=5,
+                )
+                if resp.ok:
+                    return f"{self.name}: Shared memory stored."
+            except Exception:
+                pass
         try:
             with open(self.shared_memory_file, "a") as f:
                 f.write(f"{self.clone_id}: {fact}\n")
@@ -505,6 +536,14 @@ class Hecate:
             return f"{self.name}: Failed to store memory:\n{e}"
 
     def _clone_memories(self):
+        if self.clone_server:
+            try:
+                resp = requests.get(f"{self.clone_server}/memories", timeout=5)
+                if resp.ok:
+                    data = resp.text.strip()
+                    return data if data else f"{self.name}: (no memories)"
+            except Exception:
+                pass
         if not os.path.exists(self.shared_memory_file):
             return f"{self.name}: No shared memories."
         with open(self.shared_memory_file, "r") as f:
