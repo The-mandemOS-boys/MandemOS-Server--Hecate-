@@ -10,6 +10,11 @@ memories = []
 tasks = []
 results = []
 
+@app.route('/health', methods=['GET'])
+def health():
+    """Simple health check endpoint."""
+    return jsonify({'status': 'ok'})
+
 @app.route('/send', methods=['POST'])
 def send_message():
     data = request.get_json(force=True)

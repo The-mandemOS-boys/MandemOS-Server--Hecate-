@@ -18,6 +18,11 @@ def run_server():
     """Start the Flask API server."""
     app.run(host="0.0.0.0", port=8080)
 
+@app.route("/health", methods=["GET"])
+def health():
+    """Simple health check endpoint."""
+    return jsonify({"status": "ok"})
+
 @app.route("/talk", methods=["POST"])
 def talk():
     data = request.json
