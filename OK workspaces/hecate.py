@@ -117,6 +117,17 @@ class Hecate:
             except Exception:
                 return f"{self.name}: Use 'location:lat|lon|email'"
 
+        elif "alika in distress" in user_input.lower():
+            to = os.getenv("DISTRESS_EMAIL")
+            if not self.current_location:
+                return f"{self.name}: No location available."
+            if not to:
+                return f"{self.name}: No emergency contact configured."
+            lat, lon = self.current_location
+            subject = "Distress Location"
+            body = f"Latitude: {lat}\nLongitude: {lon}"
+            return self._send_email(to, subject, body)
+
         elif user_input.startswith("inbox"):
             try:
                 count = int(user_input.split(":", 1)[1]) if ":" in user_input else 5
