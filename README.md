@@ -93,6 +93,9 @@ The web interface provides buttons to fetch your coordinates and send them via e
 You can configure an emergency contact by setting the environment variable `DISTRESS_EMAIL`.
 If your location has been tagged and you type **"Alika in distress"**, Hecate will
 email the saved location to this address.
+Hecate also listens for certain distress phrases such as "help", "help me", "I'm scared",
+"I'll call my dad", "stop it now", and "leave me alone". Saying or typing any of these will
+trigger the same emergency email with your tagged location.
 
 ### Running from a zipped archive
 You can bundle Hecate into a single executable zip using Python's `zipapp` module. First make sure `__main__.py` is present (it runs the server). Create the archive:
