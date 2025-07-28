@@ -74,6 +74,10 @@ Use `move:src|dest` to move or rename files within the `scripts/` folder.
 Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
 The web interface provides buttons to fetch your coordinates and send them via email.
 
+You can configure an emergency contact by setting the environment variable `DISTRESS_EMAIL`.
+If your location has been tagged and you type **"Alika in distress"**, Hecate will
+email the saved location to this address.
+
 ### Running from a zipped archive
 You can bundle Hecate into a single executable zip using Python's `zipapp` module. First make sure `__main__.py` is present (it runs the server). Create the archive:
 
