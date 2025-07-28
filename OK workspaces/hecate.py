@@ -9,7 +9,23 @@ import email
 from email.mime.text import MIMEText
 import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def _load_openai_key():
+    """Fetch the OpenAI API key from env or local file."""
+    key = os.getenv("OPENAI_API_KEY")
+    if key:
+        return key
+
+    # Try to read from openai_key.txt at repository root
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    key_path = os.path.join(root_dir, "openai_key.txt")
+    if os.path.exists(key_path):
+        with open(key_path, "r") as f:
+            return f.read().strip()
+    return None
+
+
+openai.api_key = _load_openai_key()
 
 os.makedirs("scripts", exist_ok=True)
 
