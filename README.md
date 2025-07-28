@@ -18,6 +18,7 @@ This is the base of a fully interactive coding bot. Expand with AI core or Disco
 
 ### Memory Tools
 Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered.
+Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
 
 ### ChatGPT Integration
 Hecate can now send your text prompts to OpenAI's ChatGPT. It uses the `gpt-4o`
