@@ -90,6 +90,9 @@ Both the CLI tools and the API server automatically read the key from these loca
 
    The server logs each conversation to `conversation.log` so you can read back the dialogue later.
 
+   A health check endpoint is available at `http://localhost:8080/health`.
+   Load balancers can poll this URL to verify the service is running.
+
 3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.
 
 ### Command Line Chat
