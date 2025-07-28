@@ -184,6 +184,17 @@ This will start the API server directly from the zip file.
 ### Self Repair and Improvement
 Use `selfrepair:description` to attempt an automated fix of Hecate's own code based on the issue description. Similarly, `selfimprove:suggestion` asks Hecate to refactor itself with the provided suggestion. Both commands rely on your OpenAI API key and create a `.bak` backup of the current source before overwriting it if successful.
 
+### Self Improvement Lattice
+Hecate tracks ongoing improvements in a simple lattice stored in `lattice.json`.
+Use these commands to manage it:
+
+```
+lattice:show                     # display all improvement tasks
+lattice:add:category|task        # add a new task under a category
+lattice:complete:category|n      # mark task number n as done
+lattice:reset                    # restore the default lattice
+```
+
 ### Antivirus Scanning
 Run `antivirus.py` to periodically scan the `scripts/` directory for infected files using `clamscan`. The script also attempts to keep the ClamAV virus definitions up to date by calling `freshclam` at regular intervals. Any detected threats are moved to the `quarantine/` folder. Ensure both `clamscan` and `freshclam` are installed so the scan and updates can run successfully.
 
