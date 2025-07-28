@@ -176,6 +176,10 @@ class Hecate:
             content = user_input.split("learn:", 1)[1].strip()
             return self._learn_from_text(content)
 
+        elif user_input.startswith("clone:learn:"):
+            content = user_input.split("clone:learn:", 1)[1].strip()
+            return self._clone_learn(content)
+
         elif user_input.startswith("clone:send:"):
             message = user_input.split("clone:send:", 1)[1].strip()
             return self._clone_send(message)
@@ -265,6 +269,26 @@ class Hecate:
             with open(self.memory_file, "a") as f:
                 f.write(summary + "\n")
             return f"{self.name}: I've noted the key points."
+        except Exception as e:
+            return f"{self.name}: Failed to learn from text:\n{e}"
+
+    def _clone_learn(self, content):
+        """Learn from text and store the bullet points in shared clone memory."""
+        if not content:
+            return f"{self.name}: No text provided to learn from."
+        try:
+            prompt = (
+                "Extract the key lessons or facts from the following text in short bullet points:"
+                f"\n{content}"
+            )
+            resp = openai.ChatCompletion.create(
+                model=OPENAI_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            summary = resp.choices[0].message["content"].strip()
+            with open(self.shared_memory_file, "a") as f:
+                f.write(summary + "\n")
+            return f"{self.name}: I've shared the key points."
         except Exception as e:
             return f"{self.name}: Failed to learn from text:\n{e}"
 
