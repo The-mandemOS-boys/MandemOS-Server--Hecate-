@@ -171,3 +171,11 @@ Run `antivirus.py` to periodically scan the `scripts/` directory for infected fi
 ### MandemOS Database
 Run `python setup_database.py` to create a SQLite database named `mandemos.db` with tables for scrolls, relics, and keys.
 
+Once the database exists, you can populate it with the metadata from `metadata.json` using `insert_metadata.py`:
+
+```bash
+python insert_metadata.py
+```
+
+This inserts the scroll information from `metadata.json` into the `scrolls` table.
+
