@@ -102,8 +102,11 @@
   }
 
     async function sendText() {
-      const text = document.getElementById("textInput").value;
+      const inputEl = document.getElementById("textInput");
+      const text = inputEl.value;
       if (!text) return;
+      inputEl.value = "";
+      inputEl.focus();
       document.getElementById("transcript").innerText = `You: ${text}`;
 
       const res = await fetch("http://localhost:8080/talk", {
