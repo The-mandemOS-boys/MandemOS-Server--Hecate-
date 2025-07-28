@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from firewall import sanitize_text
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +17,7 @@ def send_message():
     clone_id = data.get('id', 'unknown')
     msg = data.get('message', '')
     if msg:
+        msg = sanitize_text(msg)
         messages.append(f"{clone_id}: {msg}")
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing message'}), 400
@@ -30,6 +32,7 @@ def remember_fact():
     clone_id = data.get('id', 'unknown')
     fact = data.get('fact', '')
     if fact:
+        fact = sanitize_text(fact)
         memories.append(f"{clone_id}: {fact}")
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing fact'}), 400
@@ -43,6 +46,7 @@ def add_task():
     data = request.get_json(force=True)
     task = data.get('task')
     if task:
+        task = sanitize_text(task)
         tasks.append(task)
         return jsonify({'status': 'queued'})
     return jsonify({'error': 'missing task'}), 400
@@ -60,6 +64,7 @@ def store_result():
     result = data.get('result')
     clone_id = data.get('id', 'unknown')
     if result is not None:
+        result = sanitize_text(str(result))
         results.append(f"{clone_id}: {result}")
         return jsonify({'status': 'stored'})
     return jsonify({'error': 'missing result'}), 400
