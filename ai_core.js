@@ -12,8 +12,8 @@ find . -type f -name "*.jpg" | while read file; do
   else
     date=$(date +"%Y-%m-%d")
     dir=$(dirname "$file")
-    mv "$file" "$dir/${date}_$base"
-    echo "Renamed $file -> $dir/${date}_$base"
+    mv "$file" "$dir/\${date}_$base"
+    echo "Renamed $file -> $dir/\${date}_$base"
   fi
 done
 `;
