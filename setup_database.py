@@ -7,7 +7,15 @@ DB_NAME = 'mandemos.db'
 TABLES = {
     'scrolls': 'CREATE TABLE IF NOT EXISTS scrolls (id INTEGER PRIMARY KEY, name TEXT, description TEXT)',
     'relics': 'CREATE TABLE IF NOT EXISTS relics (id INTEGER PRIMARY KEY, name TEXT, origin TEXT)',
-    'keys': 'CREATE TABLE IF NOT EXISTS keys (id INTEGER PRIMARY KEY, name TEXT, purpose TEXT)'
+    'keys': 'CREATE TABLE IF NOT EXISTS keys (id INTEGER PRIMARY KEY, name TEXT, purpose TEXT)',
+    'keyword_usage': (
+        'CREATE TABLE IF NOT EXISTS keyword_usage ('
+        'clone_id TEXT NOT NULL, '
+        'keyword TEXT NOT NULL, '
+        'count INTEGER NOT NULL DEFAULT 0, '
+        'PRIMARY KEY (clone_id, keyword)'
+        ')'
+    )
 }
 
 def setup_database():
