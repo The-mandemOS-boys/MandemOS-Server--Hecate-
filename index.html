@@ -8,6 +8,8 @@
   <button onclick="startListening()">🎤 Speak</button>
   <input type="text" id="textInput" placeholder="Type your message"/>
   <button onclick="sendText()">Send</button>
+  <button onclick="sendSMS()">Text Me</button>
+  <button onclick="callPhone()">Call Me</button>
   <p id="transcript"></p>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
@@ -47,7 +49,7 @@
       window.speechSynthesis.speak(msg);
     }
 
-    async function sendText() {
+    async function sendCommand(prefix) {
       const text = document.getElementById("textInput").value;
       if (!text) return;
       document.getElementById("transcript").innerText = `You: ${text}`;
@@ -55,13 +57,25 @@
       const res = await fetch("http://localhost:8080/talk", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ message: prefix + text })
       });
 
       const data = await res.json();
       const reply = data.reply;
       document.getElementById("response").innerText = reply;
       speak(reply);
+    }
+
+    function sendText() {
+      sendCommand("");
+    }
+
+    function sendSMS() {
+      sendCommand("sms:");
+    }
+
+    function callPhone() {
+      sendCommand("call:");
     }
 
     document.getElementById("textInput").addEventListener("keypress", function(e) {

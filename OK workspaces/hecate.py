@@ -7,6 +7,8 @@ import smtplib
 import imaplib
 import email
 from email.mime.text import MIMEText
+from urllib.parse import quote
+from twilio.rest import Client
 import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -22,6 +24,10 @@ class Hecate:
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
+        self.twilio_sid = os.getenv("TWILIO_SID")
+        self.twilio_token = os.getenv("TWILIO_AUTH_TOKEN")
+        self.twilio_from = os.getenv("TWILIO_FROM")
+        self.twilio_to = os.getenv("TWILIO_TO")
 
     def respond(self, user_input):
         if user_input.startswith("remember:"):
@@ -65,6 +71,14 @@ class Hecate:
             except ValueError:
                 count = 5
             return self._fetch_emails(count)
+
+        elif user_input.startswith("sms:"):
+            message = user_input.split("sms:", 1)[1].strip()
+            return self._send_sms(message)
+
+        elif user_input.startswith("call:"):
+            message = user_input.split("call:", 1)[1].strip()
+            return self._call_phone(message)
 
         elif "code" in user_input.lower() and self.coder:
             return f"{self.name}: What kind of code would you like me to write for you?"
@@ -137,6 +151,29 @@ class Hecate:
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
+
+    def _send_sms(self, body, to=None):
+        to = to or self.twilio_to
+        if not all([self.twilio_sid, self.twilio_token, self.twilio_from, to]):
+            return f"{self.name}: Twilio credentials not configured."
+        try:
+            client = Client(self.twilio_sid, self.twilio_token)
+            client.messages.create(body=body, from_=self.twilio_from, to=to)
+            return f"{self.name}: SMS sent to {to}."
+        except Exception as e:
+            return f"{self.name}: Failed to send SMS:\n{e}"
+
+    def _call_phone(self, message, to=None):
+        to = to or self.twilio_to
+        if not all([self.twilio_sid, self.twilio_token, self.twilio_from, to]):
+            return f"{self.name}: Twilio credentials not configured."
+        try:
+            client = Client(self.twilio_sid, self.twilio_token)
+            url = f"https://twimlets.com/message?Message%5B0%5D={quote(message)}"
+            client.calls.create(to=to, from_=self.twilio_from, url=url)
+            return f"{self.name}: Placing call to {to}."
+        except Exception as e:
+            return f"{self.name}: Failed to place call:\n{e}"
 
     def _send_email(self, to_addr, subject, body):
         if not (self.gmail_user and self.gmail_pass):
