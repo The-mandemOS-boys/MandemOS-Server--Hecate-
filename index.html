@@ -6,6 +6,8 @@
 <body style="font-family: sans-serif; padding: 2em;">
   <h1>🕯️ Talk to Hecate</h1>
   <button onclick="startListening()">🎤 Speak</button>
+  <input type="text" id="textInput" placeholder="Type your message"/>
+  <button onclick="sendText()">Send</button>
   <p id="transcript"></p>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
@@ -44,6 +46,29 @@
       msg.lang = "en-US";
       window.speechSynthesis.speak(msg);
     }
+
+    async function sendText() {
+      const text = document.getElementById("textInput").value;
+      if (!text) return;
+      document.getElementById("transcript").innerText = `You: ${text}`;
+
+      const res = await fetch("http://localhost:8080/talk", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      const reply = data.reply;
+      document.getElementById("response").innerText = reply;
+      speak(reply);
+    }
+
+    document.getElementById("textInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendText();
+      }
+    });
   </script>
 </body>
 </html>

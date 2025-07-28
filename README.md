@@ -9,3 +9,13 @@
 3. It will commit code into your repo automatically
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
+
+### ChatGPT Integration
+Hecate can now send your text prompts to OpenAI's ChatGPT. Set the `OPENAI_API_KEY` environment variable before running the Flask server:
+
+```bash
+export OPENAI_API_KEY=your_api_key
+python "OK workspaces/main. py"
+```
+
+In the browser interface, type your message into the text box or use the voice button.
