@@ -56,6 +56,15 @@ You can also click **Summarize Memory** to get a short summary of all remembered
 
 3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.
 
+### Command Line Chat
+If you prefer to talk to Hecate directly in your terminal, run the small CLI utility:
+
+```bash
+python "OK workspaces/cli.py"
+```
+
+Type your message and press Enter to receive a response. Use `quit` or `exit` to leave the session.
+
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:
 
