@@ -30,6 +30,11 @@ for the API key in the `OPENAI_API_KEY` environment variable. If that isn't
 present, it will attempt to load a key from a file named `openai_key.txt` in the
 repository root.
 
+To obtain an API key, sign up or log in at [OpenAI](https://platform.openai.com).
+Visit the **API keys** page of your account dashboard and create a new secret
+key. Copy that key and provide it either through the environment variable or the
+`openai_key.txt` file.
+
 ```bash
 # Option 1: environment variable
 export OPENAI_API_KEY=your_api_key
