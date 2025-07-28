@@ -59,6 +59,10 @@ class Hecate:
             "stop it now",
             "leave me alone",
         ]
+        self.admin = False
+        self.admin_password = os.getenv("ADMIN_PASSWORD", "whostheboss")
+        self.admin_file = "admin_status.txt"
+        self._load_admin_status()
 
     def startup_message(self):
         """Return the initial prompt asking for the user's identity."""
@@ -78,6 +82,23 @@ class Hecate:
             self.user_name = user_input.strip() or None
             if self.user_name:
                 return f"{self.name}: Nice to meet you, {self.user_name}."
+
+        if user_input.startswith("admin:"):
+            cmd = user_input.split("admin:", 1)[1].strip()
+            if cmd == "status":
+                state = "granted" if self.admin else "not granted"
+                return f"{self.name}: Admin rights {state}."
+            elif cmd == "logout":
+                self.admin = False
+                self._save_admin_status()
+                return f"{self.name}: Admin privileges revoked."
+            else:
+                if cmd == self.admin_password:
+                    self.admin = True
+                    self._save_admin_status()
+                    return f"{self.name}: Admin privileges granted."
+                else:
+                    return f"{self.name}: Incorrect admin password."
 
         if user_input.startswith("remember:"):
             fact = user_input.split("remember:", 1)[1].strip()
@@ -594,6 +615,20 @@ class Hecate:
         with open(self.shared_memory_file, "r") as f:
             data = f.read().strip()
         return data if data else f"{self.name}: (no memories)"
+
+    def _load_admin_status(self):
+        try:
+            with open(self.admin_file, "r") as f:
+                self.admin = f.read().strip() == "true"
+        except Exception:
+            self.admin = False
+
+    def _save_admin_status(self):
+        try:
+            with open(self.admin_file, "w") as f:
+                f.write("true" if self.admin else "false")
+        except Exception:
+            pass
 
     def _chatgpt_response(self, text):
         if not openai.api_key:
