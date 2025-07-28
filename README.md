@@ -64,6 +64,11 @@ python "OK workspaces/cli.py"
 ```
 
 Type your message and press Enter to receive a response. Use `quit` or `exit` to leave the session.
+You can also enable speech-to-text input with the `--voice` flag (requires a microphone and PyAudio):
+
+```bash
+python "OK workspaces/cli.py" --voice
+```
 
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:

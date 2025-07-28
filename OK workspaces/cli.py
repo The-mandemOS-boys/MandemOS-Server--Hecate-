@@ -1,8 +1,31 @@
 from hecate import Hecate
+import argparse
+import speech_recognition as sr
 
 
-def main():
-    bot = Hecate()
+def voice_chat(bot):
+    """Continuous microphone input loop."""
+    r = sr.Recognizer()
+    mic = sr.Microphone()
+    print("Speak into the microphone. Press Ctrl+C to exit.")
+    while True:
+        try:
+            with mic as source:
+                audio = r.listen(source)
+            try:
+                text = r.recognize_google(audio)
+            except Exception as e:
+                print(f"[error] {e}")
+                continue
+            print(f'You: {text}')
+            reply = bot.respond(text)
+            print(reply)
+        except KeyboardInterrupt:
+            print()
+            break
+
+
+def text_chat(bot):
     print("Type your message. Enter 'quit' to exit.")
     while True:
         try:
@@ -19,4 +42,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Hecate CLI")
+    parser.add_argument("--voice", action="store_true", help="Use microphone input")
+    args = parser.parse_args()
+
+    bot = Hecate()
+    if args.voice:
+        voice_chat(bot)
+    else:
+        text_chat(bot)
