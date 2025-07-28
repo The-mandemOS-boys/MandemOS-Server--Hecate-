@@ -9,6 +9,10 @@
   <input type="text" id="textInput" placeholder="Type your message"/>
   <button onclick="sendText()">Send</button>
   <p id="transcript"></p>
+  <p id="location"></p>
+  <input type="text" id="emailInput" placeholder="Email address" />
+  <button onclick="getLocation()">📍 Get Location</button>
+  <button onclick="emailLocation()">Email Location</button>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
   <script>
@@ -40,12 +44,49 @@
       recognition.start();
     }
 
-    function speak(text) {
-      const msg = new SpeechSynthesisUtterance();
-      msg.text = text;
-      msg.lang = "en-US";
-      window.speechSynthesis.speak(msg);
+  function speak(text) {
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = text;
+    msg.lang = "en-US";
+    window.speechSynthesis.speak(msg);
+  }
+
+  let currentLocation = null;
+  function getLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported.");
+      return;
     }
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      currentLocation = { latitude, longitude };
+      document.getElementById("location").innerText = `Location: ${latitude}, ${longitude}`;
+    }, err => {
+      alert("Unable to retrieve location: " + err.message);
+    });
+  }
+
+  async function emailLocation() {
+    if (!currentLocation) {
+      alert("No location captured yet.");
+      return;
+    }
+    const to = document.getElementById("emailInput").value.trim();
+    if (!to) {
+      alert("Enter email address");
+      return;
+    }
+    const message = `location:${currentLocation.latitude}|${currentLocation.longitude}|${to}`;
+    const res = await fetch("http://localhost:8080/talk", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message })
+    });
+    const data = await res.json();
+    const reply = data.reply;
+    document.getElementById("response").innerText = reply;
+    speak(reply);
+  }
 
     async function sendText() {
       const text = document.getElementById("textInput").value;
