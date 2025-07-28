@@ -68,6 +68,15 @@ class Hecate:
             except ValueError:
                 return f"{self.name}: Use 'retrieve:url|filename'"
 
+        elif user_input.startswith("create:"):
+            try:
+                parts = user_input.split("create:", 1)[1].split("|", 1)
+                filename = parts[0].strip()
+                content = parts[1] if len(parts) > 1 else ""
+                return self._create_file(filename, content)
+            except Exception:
+                return f"{self.name}: Use 'create:filename|content'"
+
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
@@ -150,6 +159,15 @@ class Hecate:
             return f"{self.name}: File saved as {filename}."
         except Exception as e:
             return f"{self.name}: Failed to retrieve file:\n{e}"
+
+    def _create_file(self, filename, content=""):
+        path = os.path.join("scripts", filename)
+        try:
+            with open(path, "w") as f:
+                f.write(content)
+            return f"{self.name}: Created file {filename}."
+        except Exception as e:
+            return f"{self.name}: Failed to create file:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()

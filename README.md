@@ -44,6 +44,10 @@ export GMAIL_PASS=your_app_password
 
 Use the commands `email:recipient|subject|body` to send an email and `inbox:n` to read your latest `n` emails.
 
+### File Utilities
+Use `retrieve:url|filename` to download a remote file into the `scripts/` folder.
+Use `create:filename|content` to create a file with optional content.
+
 ### Location Tagging
 Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
 The web interface provides buttons to fetch your coordinates and send them via email.
