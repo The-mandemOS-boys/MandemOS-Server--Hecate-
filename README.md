@@ -14,6 +14,16 @@
 2. Run `node hecate-auto.js`
 3. It will commit and push code to your repo automatically
 
+### Running the Flask Backend
+Install the dependencies and start the server:
+
+```bash
+pip install Flask flask-cors requests beautifulsoup4
+python "OK workspaces/main.py"
+```
+
+Open `index.html` in your browser to interact with Hecate.
+
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
 ### ChatGPT Integration
@@ -29,7 +39,7 @@ export OPENAI_API_KEY=your_api_key
 # Option 2: place the key in openai_key.txt
 echo your_api_key > openai_key.txt
 
-python "OK workspaces/main. py"
+python "OK workspaces/main.py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.

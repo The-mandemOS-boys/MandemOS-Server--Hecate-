@@ -3,6 +3,7 @@ import io
 import os
 import requests
 from bs4 import BeautifulSoup
+import urllib.parse
 import smtplib
 import imaplib
 import email
@@ -146,7 +147,8 @@ class Hecate:
 
     def _search_web(self, query):
         try:
-            url = f"https://duckduckgo.com/html/?q={query.replace(' ', '+')}"
+            encoded = urllib.parse.quote_plus(query)
+            url = f"https://duckduckgo.com/html/?q={encoded}"
             headers = {'User-Agent': 'Mozilla/5.0'}
             res = requests.get(url, headers=headers, timeout=5)
             soup = BeautifulSoup(res.text, 'html.parser')
