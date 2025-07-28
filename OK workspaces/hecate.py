@@ -39,6 +39,16 @@ class Hecate:
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
         self.current_location = None
+        self.distress_phrases = [
+            "help",
+            "help me",
+            "i'm scared",
+            "i’m scared",
+            "i'll call my dad",
+            "i’ll call my dad",
+            "stop it now",
+            "leave me alone",
+        ]
 
     def respond(self, user_input):
         if user_input.startswith("remember:"):
@@ -117,7 +127,7 @@ class Hecate:
             except Exception:
                 return f"{self.name}: Use 'location:lat|lon|email'"
 
-        elif "alika in distress" in user_input.lower():
+        elif any(p in user_input.lower() for p in self.distress_phrases) or "alika in distress" in user_input.lower():
             to = os.getenv("DISTRESS_EMAIL")
             if not self.current_location:
                 return f"{self.name}: No location available."
