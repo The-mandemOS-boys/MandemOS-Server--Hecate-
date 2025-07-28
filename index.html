@@ -6,6 +6,7 @@
 <body style="font-family: sans-serif; padding: 2em;">
   <h1>🕯️ Talk to Hecate</h1>
   <button onclick="startListening()">🎤 Speak</button>
+  <button onclick="showMemory()">📜 Memories</button>
   <p id="transcript"></p>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
@@ -43,6 +44,12 @@
       msg.text = text;
       msg.lang = "en-US";
       window.speechSynthesis.speak(msg);
+    }
+
+    async function showMemory() {
+      const res = await fetch("http://localhost:8080/memory");
+      const data = await res.json();
+      alert(data.memory.join("\n") || "(no memories)");
     }
   </script>
 </body>

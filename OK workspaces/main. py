@@ -15,5 +15,11 @@ def talk():
     response = hecate.respond(user_input)
     return jsonify({"reply": response})
 
+
+@app.route("/memory", methods=["GET"])
+def memory():
+    """Return Hecate's stored facts."""
+    return jsonify({"memory": hecate.get_memory()})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

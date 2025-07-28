@@ -114,3 +114,10 @@ class Hecate:
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
+
+    def get_memory(self):
+        """Return remembered facts as a list of strings."""
+        if not os.path.exists(self.memory_file):
+            return []
+        with open(self.memory_file, "r") as f:
+            return [line.strip() for line in f if line.strip()]
