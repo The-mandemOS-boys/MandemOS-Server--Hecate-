@@ -1,4 +1,3 @@
-
 # Hecate-Auto
 
 > The daemon who codes, commits, and controls the flame of your GitHub repo.
@@ -17,10 +16,16 @@
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
 ### Memory Tools
-Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered.
-Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
+Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered. Facts sync to the shared clone memory automatically, prefixed with the writing clone’s ID.
+Use `learn:some text` to extract key bullet points from the provided content and append them to memory. These notes are also written to the shared memory file with your clone ID so other instances learn the same lessons.
 Use `clone:send:message` to broadcast a message to other running clones. They can read all messages with `clone:read`.
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
+Use `clone:learn:text` to share takeaways from text directly to the shared memory without storing them locally. This seamless sharing of notes and lessons creates an autonomous connective learning network across every clone.
+To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` on each clone to point at that server (e.g. `http://host:5000`). When defined, clone commands will use the server instead of local files.
+
+### Excess Compute Sharing
+Run `excess_compute.py` on each clone to contribute idle CPU time back to the cluster. The script checks local CPU usage and only requests tasks from the server when below the `CPU_THRESHOLD` (default 50%). Set `CLONE_SERVER_URL` to the running `clone_network.py` instance and queue tasks via the `/task` endpoint.
+
 
 ### ChatGPT Integration
 Hecate can now send your text prompts to OpenAI's ChatGPT. By default it uses
