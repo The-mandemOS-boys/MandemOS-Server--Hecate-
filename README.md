@@ -37,6 +37,7 @@ python "OK workspaces/main.py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.
+You can choose from any system speech synthesis voice using the **Voice** drop-down next to the Speak button.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
 
 ### Run Locally

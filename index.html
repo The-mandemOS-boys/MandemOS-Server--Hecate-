@@ -18,6 +18,7 @@
 <body>
   <h1>🕯️ Talk to Hecate</h1>
   <button onclick="startListening()">🎤 Speak</button>
+  <select id="voiceSelect"></select>
   <input type="text" id="textInput" placeholder="Type your message"/>
   <button onclick="sendText()">Send</button>
   <p id="transcript"></p>
@@ -58,26 +59,47 @@
       recognition.start();
     }
 
-  let irishVoice = null;
-  function selectIrishVoice() {
-    const voices = window.speechSynthesis.getVoices();
-    irishVoice = voices.find(v => (/en-IE/i.test(v.lang) && /female|Moira/i.test(v.name))) ||
-                 voices.find(v => /Moira/i.test(v.name)) ||
-                 voices.find(v => /en-IE/i.test(v.lang)) || null;
+  let availableVoices = [];
+  let selectedVoice = null;
+
+  function populateVoices() {
+    availableVoices = window.speechSynthesis.getVoices();
+    const select = document.getElementById("voiceSelect");
+    select.innerHTML = "";
+
+    availableVoices.forEach((voice, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = `${voice.name} (${voice.lang})`;
+      select.appendChild(opt);
+    });
+
+    const defaultVoice = availableVoices.find(v => (/en-IE/i.test(v.lang) && /female|Moira/i.test(v.name))) ||
+                         availableVoices.find(v => /Moira/i.test(v.name)) ||
+                         availableVoices.find(v => /en-IE/i.test(v.lang)) ||
+                         availableVoices[0] || null;
+
+    selectedVoice = defaultVoice;
+    if (defaultVoice) {
+      select.value = availableVoices.indexOf(defaultVoice);
+    }
   }
+
+  document.getElementById("voiceSelect").addEventListener("change", function(e) {
+    selectedVoice = availableVoices[this.value];
+  });
+
   if (window.speechSynthesis.onvoiceschanged !== undefined) {
-    window.speechSynthesis.onvoiceschanged = selectIrishVoice;
+    window.speechSynthesis.onvoiceschanged = populateVoices;
   }
-  selectIrishVoice();
+  populateVoices();
 
   function speak(text) {
     const msg = new SpeechSynthesisUtterance();
     msg.text = text;
-    if (irishVoice) {
-      msg.voice = irishVoice;
-      msg.lang = irishVoice.lang;
-    } else {
-      msg.lang = "en-IE";
+    if (selectedVoice) {
+      msg.voice = selectedVoice;
+      msg.lang = selectedVoice.lang;
     }
     window.speechSynthesis.speak(msg);
   }
