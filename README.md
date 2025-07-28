@@ -29,3 +29,22 @@ export GMAIL_PASS=your_app_password
 ```
 
 Use the commands `email:recipient|subject|body` to send an email and `inbox:n` to read your latest `n` emails.
+
+### Phone Integration
+Install the Twilio client library and configure your account to let Hecate text or call you.
+First install the package:
+
+```bash
+pip install twilio
+```
+
+Then set these environment variables:
+
+```bash
+export TWILIO_SID=your_account_sid
+export TWILIO_AUTH_TOKEN=your_auth_token
+export TWILIO_FROM=+15551234567  # your Twilio number
+export TWILIO_TO=+15557654321    # destination number
+```
+
+Use `sms:your message` to send a text and `call:your message` to receive a phone call with the spoken text.
