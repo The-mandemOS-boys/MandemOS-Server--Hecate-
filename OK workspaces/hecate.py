@@ -22,6 +22,7 @@ class Hecate:
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
+        self.current_location = None
 
     def respond(self, user_input):
         if user_input.startswith("remember:"):
@@ -58,6 +59,21 @@ class Hecate:
                 return self._send_email(to.strip(), subject.strip(), body.strip())
             except ValueError:
                 return f"{self.name}: Use 'email:recipient|subject|body'"
+
+        elif user_input.startswith("location:"):
+            try:
+                parts = user_input.split("location:", 1)[1].split("|")
+                lat = parts[0].strip()
+                lon = parts[1].strip()
+                self.current_location = (lat, lon)
+                if len(parts) > 2:
+                    to = parts[2].strip()
+                    subject = "Location Data"
+                    body = f"Latitude: {lat}\nLongitude: {lon}"
+                    return self._send_email(to, subject, body)
+                return f"{self.name}: Location tagged at {lat}, {lon}."
+            except Exception:
+                return f"{self.name}: Use 'location:lat|lon|email'"
 
         elif user_input.startswith("inbox"):
             try:

@@ -29,3 +29,7 @@ export GMAIL_PASS=your_app_password
 ```
 
 Use the commands `email:recipient|subject|body` to send an email and `inbox:n` to read your latest `n` emails.
+
+### Location Tagging
+Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
+The web interface provides buttons to fetch your coordinates and send them via email.
