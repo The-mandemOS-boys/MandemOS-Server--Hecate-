@@ -8,6 +8,7 @@ import imaplib
 import email
 from email.mime.text import MIMEText
 import openai
+import subprocess
 
 # Allow overriding the OpenAI model via environment variable. Default to gpt-4o
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
@@ -317,6 +318,9 @@ class Hecate:
             res.raise_for_status()
             with open(path, "wb") as f:
                 f.write(res.content)
+            clean, msg = self._scan_file(path)
+            if not clean:
+                return f"{self.name}: {msg}"
             return f"{self.name}: File saved as {filename}."
         except Exception as e:
             return f"{self.name}: Failed to retrieve file:\n{e}"
@@ -371,6 +375,23 @@ class Hecate:
             return f"{self.name}: Deleted {filename}."
         except Exception as e:
             return f"{self.name}: Failed to delete file:\n{e}"
+
+    def _scan_file(self, path):
+        """Check a file for viruses using clamscan."""
+        try:
+            result = subprocess.run(
+                ["clamscan", path], capture_output=True, text=True
+            )
+        except FileNotFoundError:
+            return True, "clamscan not found"
+        if result.returncode == 1:
+            os.makedirs("quarantine", exist_ok=True)
+            qpath = os.path.join("quarantine", os.path.basename(path))
+            os.rename(path, qpath)
+            return False, f"File infected. Moved to {qpath}"
+        if result.returncode != 0:
+            return True, f"Scan error: {result.stderr.strip()}"
+        return True, "clean"
 
     def _run_code(self, code):
         buffer = io.StringIO()
