@@ -17,7 +17,8 @@
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
 ### ChatGPT Integration
-Hecate can now send your text prompts to OpenAI's ChatGPT. By default it looks
+Hecate can now send your text prompts to OpenAI's ChatGPT. It uses the `gpt-4o`
+model for generating replies. By default it looks
 for the API key in the `OPENAI_API_KEY` environment variable. If that isn't
 present, it will attempt to load a key from a file named `openai_key.txt` in the
 repository root.

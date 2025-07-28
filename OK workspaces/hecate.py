@@ -269,7 +269,7 @@ class Hecate:
     def _chatgpt_response(self, text):
         try:
             resp = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 messages=[{"role": "user", "content": text}]
             )
             answer = resp.choices[0].message["content"].strip()
