@@ -21,7 +21,11 @@ Use `remember:your fact` to store a memory and `recall` to read them back. The c
 Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
 Use `clone:send:message` to broadcast a message to other running clones. They can read all messages with `clone:read`.
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
-To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` on each clone to point at that server (e.g. `http://host:5000`). When defined, clone commands will use the server instead of local files.
+To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` on each clone to point at that server (e.g. `http://host:5000`). When defined, clone commands will use the server instead of local files. A small helper utility `clone_client.py` provides direct access to these features:
+
+```bash
+python clone_client.py --help
+```
 
 ### Sensitive Data Firewall
 `clone_network.py` now masks API keys and other tokens from shared messages and tasks. Set `FIREWALL_PATTERNS` with comma-separated regexes to customize what gets filtered.
