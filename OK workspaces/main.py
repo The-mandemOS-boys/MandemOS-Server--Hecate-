@@ -8,12 +8,14 @@ CORS(app)
 # Instantiate Hecate
 hecate = Hecate()
 
+
 @app.route("/talk", methods=["POST"])
 def talk():
     data = request.json
     user_input = data.get("message", "")
     response = hecate.respond(user_input)
     return jsonify({"reply": response})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

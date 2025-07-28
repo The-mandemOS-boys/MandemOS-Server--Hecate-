@@ -6,8 +6,14 @@ from bs4 import BeautifulSoup
 
 os.makedirs("scripts", exist_ok=True)
 
+
 class Hecate:
-    def __init__(self, name="Hecate", personality="bold and adaptive", coder=True):
+    def __init__(
+        self,
+        name="Hecate",
+        personality="bold and adaptive",
+        coder=True,
+    ):
         self.name = name
         self.personality = personality
         self.coder = coder
@@ -44,10 +50,16 @@ class Hecate:
             return self._self_update(code_snippet)
 
         elif "code" in user_input.lower() and self.coder:
-            return f"{self.name}: What kind of code would you like me to write for you?"
+            return (
+                f"{self.name}: What kind of code would you like me to write "
+                "for you?"
+            )
 
         else:
-            return f"{self.name}: (In a {self.personality} tone) You said: \"{user_input}\""
+            return (
+                f"{self.name}: (In a {self.personality} tone) You said: "
+                f"\"{user_input}\""
+            )
 
     def _remember_fact(self, fact):
         with open(self.memory_file, "a") as f:
@@ -59,7 +71,10 @@ class Hecate:
             return f"{self.name}: I don’t have any memories yet."
         with open(self.memory_file, "r") as f:
             facts = f.read().strip()
-        return f"{self.name}: Here's what I remember:\n{facts if facts else '(empty)'}"
+        return (
+            f"{self.name}: Here's what I remember:\n"
+            f"{facts if facts else '(empty)'}"
+        )
 
     def _save_code(self, filename):
         if not self.last_code:
@@ -100,7 +115,9 @@ class Hecate:
                 return f"{self.name}: I searched, but found no clear results."
             response = f"{self.name}: Here's what I found:\n"
             for i, r in enumerate(results, 1):
-                response += f"{i}. {r.text.strip()}\n   Link: {r['href']}\n"
+                response += (
+                    f"{i}. {r.text.strip()}\n   Link: {r['href']}\n"
+                )
             return response
         except Exception as e:
             return f"{self.name}: I ran into an issue while searching:\n{e}"
@@ -111,6 +128,8 @@ class Hecate:
             my_path = os.path.abspath(__file__)
             with open(my_path, "a") as f:
                 f.write("\n" + code_snippet + "\n")
-            return f"{self.name}: I've added the provided code to my source file."
+            return (
+                f"{self.name}: I've added the provided code to my source file."
+            )
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
