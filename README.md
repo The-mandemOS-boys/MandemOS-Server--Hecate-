@@ -46,6 +46,23 @@ In the browser interface, type your message into the text box or use the voice b
 You can choose from any system speech synthesis voice using the **Voice** drop-down next to the Speak button.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
 
+### API Key Insertion
+Hecate requires an OpenAI API key before it can talk to ChatGPT. You can provide the key in either of the following ways:
+
+1. Export it as an environment variable:
+
+   ```bash
+   export OPENAI_API_KEY=your_api_key
+   ```
+
+2. Write it to a file named `openai_key.txt` in the repository root:
+
+   ```bash
+   echo your_api_key > openai_key.txt
+   ```
+
+Both the CLI tools and the API server automatically read the key from these locations when they start.
+
 ### Run Locally
 
 1. Install Python dependencies:
