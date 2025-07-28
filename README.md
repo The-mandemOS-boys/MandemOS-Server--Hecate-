@@ -16,6 +16,9 @@
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
+### Memory Tools
+Use `remember:your fact` to store a memory and `recall` to read them back. The command `summarize` or the **Summarize Memory** button in the browser returns a short summary of everything remembered.
+
 ### ChatGPT Integration
 Hecate can now send your text prompts to OpenAI's ChatGPT. It uses the `gpt-4o`
 model for generating replies. By default it looks
@@ -34,6 +37,7 @@ python "OK workspaces/main. py"
 ```
 
 In the browser interface, type your message into the text box or use the voice button.
+You can also click **Summarize Memory** to get a short summary of all remembered facts.
 
 ### Gmail Integration
 Set the following environment variables so Hecate can send and receive email via Gmail:

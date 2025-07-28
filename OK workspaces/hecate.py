@@ -48,6 +48,9 @@ class Hecate:
         elif user_input == "recall":
             return self._recall_facts()
 
+        elif user_input == "summarize":
+            return self._summarize_memory()
+
         elif user_input.startswith("run:"):
             code = user_input.split("run:", 1)[1].strip()
             self.last_code = code
@@ -138,6 +141,28 @@ class Hecate:
         with open(self.memory_file, "r") as f:
             facts = f.read().strip()
         return f"{self.name}: Here's what I remember:\n{facts if facts else '(empty)'}"
+
+    def _summarize_memory(self):
+        """Return a short summary of remembered facts using ChatGPT."""
+        if not os.path.exists(self.memory_file):
+            return f"{self.name}: I don’t have any memories yet."
+        with open(self.memory_file, "r") as f:
+            facts = f.read().strip()
+        if not facts:
+            return f"{self.name}: Memory file is empty."
+        try:
+            prompt = (
+                "Summarize the following notes in a concise paragraph:"\
+                f"\n{facts}"
+            )
+            resp = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}],
+            )
+            summary = resp.choices[0].message["content"].strip()
+            return f"{self.name}: {summary}"
+        except Exception as e:
+            return f"{self.name}: Failed to summarize memory:\n{e}"
 
     def _save_code(self, filename):
         if not self.last_code:

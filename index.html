@@ -13,6 +13,7 @@
   <input type="text" id="emailInput" placeholder="Email address" />
   <button onclick="getLocation()">📍 Get Location</button>
   <button onclick="emailLocation()">Email Location</button>
+  <button onclick="summarizeMemory()">Summarize Memory</button>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
   <script>
@@ -81,6 +82,18 @@
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ message })
+    });
+    const data = await res.json();
+    const reply = data.reply;
+    document.getElementById("response").innerText = reply;
+    speak(reply);
+  }
+
+  async function summarizeMemory() {
+    const res = await fetch("http://localhost:8080/talk", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ message: "summarize" })
     });
     const data = await res.json();
     const reply = data.reply;
