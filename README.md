@@ -23,6 +23,10 @@ Use `clone:send:message` to broadcast a message to other running clones. They ca
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
 To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` on each clone to point at that server (e.g. `http://host:5000`). When defined, clone commands will use the server instead of local files.
 
+### Excess Compute Sharing
+Run `excess_compute.py` on each clone to contribute idle CPU time back to the cluster. The script checks local CPU usage and only requests tasks from the server when below the `CPU_THRESHOLD` (default 50%). Set `CLONE_SERVER_URL` to the running `clone_network.py` instance and queue tasks via the `/task` endpoint.
+
+
 ### ChatGPT Integration
 Hecate can now send your text prompts to OpenAI's ChatGPT. By default it uses
 the `gpt-4o` model, but you can select any available GPT model by setting the
