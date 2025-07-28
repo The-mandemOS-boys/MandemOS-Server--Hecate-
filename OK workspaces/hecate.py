@@ -77,6 +77,13 @@ class Hecate:
             except Exception:
                 return f"{self.name}: Use 'create:filename|content'"
 
+        elif user_input.startswith("move:"):
+            try:
+                src, dest = user_input.split("move:", 1)[1].split("|", 1)
+                return self._move_file(src.strip(), dest.strip())
+            except ValueError:
+                return f"{self.name}: Use 'move:src|dest'"
+
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
@@ -168,6 +175,18 @@ class Hecate:
             return f"{self.name}: Created file {filename}."
         except Exception as e:
             return f"{self.name}: Failed to create file:\n{e}"
+
+    def _move_file(self, src, dest):
+        src_path = os.path.join("scripts", src)
+        dest_path = os.path.join("scripts", dest)
+        try:
+            if not os.path.exists(src_path):
+                return f"{self.name}: Source file {src} not found."
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            os.rename(src_path, dest_path)
+            return f"{self.name}: Moved {src} to {dest}."
+        except Exception as e:
+            return f"{self.name}: Failed to move file:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()
