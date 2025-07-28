@@ -1,13 +1,10 @@
 from hecate import Hecate
 import argparse
 import speech_recognition as sr
-import subprocess
+from speech import speak
+import os
 
-def speak(text):
-    try:
-        subprocess.run(["espeak", text], check=True)
-    except Exception:
-        pass
+ENV_SPEAK = os.getenv("SPEAK_RESPONSES", "false").lower() in ("1", "true", "yes")
 
 
 def voice_chat(bot, speak_output=False):
@@ -58,13 +55,15 @@ if __name__ == '__main__':
     parser.add_argument("--speak", action="store_true", help="Speak responses aloud")
     args = parser.parse_args()
 
+    speak_flag = args.speak or ENV_SPEAK
+
     bot = Hecate()
     intro = bot.startup_message()
     if intro:
         print(intro)
-        if args.speak:
+        if speak_flag:
             speak(intro)
     if args.voice:
-        voice_chat(bot, speak_output=args.speak)
+        voice_chat(bot, speak_output=speak_flag)
     else:
-        text_chat(bot, speak_output=args.speak)
+        text_chat(bot, speak_output=speak_flag)

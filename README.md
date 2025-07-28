@@ -122,10 +122,17 @@ You can also enable speech-to-text input with the `--voice` flag (requires a mic
 python "OK workspaces/cli.py" --voice
 ```
 
-To hear the responses spoken aloud, add the `--speak` flag (requires pyttsx3):
+To hear the responses spoken aloud, add the `--speak` flag (requires `espeak`):
 
 ```bash
 python "OK workspaces/cli.py" --speak
+```
+
+You can also enable speech output for the API server or any clone by setting the
+`SPEAK_RESPONSES` environment variable:
+
+```bash
+export SPEAK_RESPONSES=true
 ```
 
 ### Gmail Integration
