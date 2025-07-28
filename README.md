@@ -9,3 +9,7 @@
 3. It will commit code into your repo automatically
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
+
+### LLM Overlay
+
+To enable natural language replies, set the `OPENAI_API_KEY` environment variable and use the `ask:` prefix when talking to the Flask server. Hecate will forward your prompt to the configured LLM and return its response.

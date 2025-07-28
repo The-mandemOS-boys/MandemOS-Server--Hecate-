@@ -4,6 +4,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+from llm_overlay import llm_reply
+
 os.makedirs("scripts", exist_ok=True)
 
 class Hecate:
@@ -42,6 +44,10 @@ class Hecate:
         elif user_input.startswith("selfupdate:"):
             code_snippet = user_input.split("selfupdate:", 1)[1].strip()
             return self._self_update(code_snippet)
+
+        elif user_input.startswith("ask:"):
+            prompt = user_input.split("ask:", 1)[1].strip()
+            return f"{self.name}: {llm_reply(prompt)}"
 
         elif "code" in user_input.lower() and self.coder:
             return f"{self.name}: What kind of code would you like me to write for you?"
