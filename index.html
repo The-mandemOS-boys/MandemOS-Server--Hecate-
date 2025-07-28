@@ -2,8 +2,50 @@
 <html>
 <head>
   <title>Hecate — Voice Assistant</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+    }
+
+    #background-glyph {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 200px;
+      color: rgba(255, 255, 255, 0.05);
+      animation: spin 20s linear infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    #hecate-logo {
+      position: fixed;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%) rotateX(20deg);
+      font-size: 72px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotateY(0deg); }
+      to { transform: translate(-50%, -50%) rotateY(360deg); }
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; padding: 2em;">
+<body>
+  <div id="background-glyph">✦</div>
+  <div id="hecate-logo">Hecate</div>
   <h1>🕯️ Talk to Hecate</h1>
   <button onclick="startListening()">🎤 Speak</button>
   <input type="text" id="textInput" placeholder="Type your message"/>
