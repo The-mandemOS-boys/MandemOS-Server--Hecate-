@@ -1,6 +1,8 @@
 import sys
 import io
 import os
+import traceback
+from contextlib import redirect_stdout, redirect_stderr
 import requests
 from bs4 import BeautifulSoup
 
@@ -77,13 +79,14 @@ class Hecate:
     def _run_code(self, code):
         buffer = io.StringIO()
         try:
-            sys.stdout = buffer
-            exec(code, {})
-            sys.stdout = sys.__stdout__
-            return f"{self.name}: Output from your code:\n{buffer.getvalue()}"
-        except Exception as e:
-            sys.stdout = sys.__stdout__
-            return f"{self.name}: Error while running code:\n{e}"
+            with redirect_stdout(buffer), redirect_stderr(buffer):
+                exec(code, {})
+            output = buffer.getvalue()
+            return f"{self.name}: Output from your code:\n{output}"
+        except Exception:
+            tb = traceback.format_exc()
+            output = buffer.getvalue()
+            return f"{self.name}: Error while running code:\n{output}{tb}"
 
     def _search_web(self, query):
         try:

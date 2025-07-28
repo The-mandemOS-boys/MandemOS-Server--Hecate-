@@ -9,6 +9,12 @@
   <p id="transcript"></p>
   <p><strong>Hecate:</strong> <span id="response"></span></p>
 
+  <h2>Chat with Others</h2>
+  <input id="user" placeholder="Your name" />
+  <input id="msgInput" placeholder="Type a message" />
+  <button onclick="sendMessage()">Send</button>
+  <div id="chat" style="margin-top:1em;"></div>
+
   <script>
     function startListening() {
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -19,16 +25,22 @@
         const text = event.results[0][0].transcript;
         document.getElementById("transcript").innerText = `You: ${text}`;
 
-        const res = await fetch("http://localhost:8080/talk", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ message: text })
-        });
+        try {
+          const resp = await fetch("http://localhost:8080/talk", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ message: text })
+          });
+          if (!resp.ok) throw new Error("Server responded with " + resp.status);
 
-        const data = await res.json();
-        const reply = data.reply;
-        document.getElementById("response").innerText = reply;
-        speak(reply);
+          const data = await resp.json();
+          const reply = data.reply;
+          document.getElementById("response").innerText = reply;
+          speak(reply);
+        } catch (err) {
+          console.error(err);
+          document.getElementById("response").innerText = "Error contacting server.";
+        }
       };
 
       recognition.onerror = function(err) {
@@ -44,6 +56,44 @@
       msg.lang = "en-US";
       window.speechSynthesis.speak(msg);
     }
+
+    async function sendMessage() {
+      const user = document.getElementById('user').value || 'anonymous';
+      const message = document.getElementById('msgInput').value;
+      if (!message) return;
+      try {
+        await fetch('http://localhost:8080/message', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ user: user, message: message })
+        });
+        document.getElementById('msgInput').value = '';
+        fetchMessages();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to send message');
+      }
+    }
+
+    async function fetchMessages() {
+      try {
+        const resp = await fetch('http://localhost:8080/messages');
+        if (!resp.ok) throw new Error('status ' + resp.status);
+        const data = await resp.json();
+        const chatDiv = document.getElementById('chat');
+        chatDiv.innerHTML = '';
+        data.messages.forEach(m => {
+          const p = document.createElement('p');
+          p.textContent = `${m.user}: ${m.message}`;
+          chatDiv.appendChild(p);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    setInterval(fetchMessages, 3000);
+    fetchMessages();
   </script>
 </body>
 </html>
