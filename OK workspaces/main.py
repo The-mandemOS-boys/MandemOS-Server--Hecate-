@@ -5,6 +5,7 @@ import argparse
 import subprocess
 import sys
 import os
+import speech_recognition as sr
 
 app = Flask(__name__)
 CORS(app)
@@ -23,6 +24,23 @@ def talk():
     user_input = data.get("message", "")
     response = hecate.respond(user_input)
     return jsonify({"reply": response})
+
+
+@app.route("/talk/audio", methods=["POST"])
+def talk_audio():
+    """Accept an audio file and return the transcript and response."""
+    if "file" not in request.files:
+        return jsonify({"error": "Missing audio file"}), 400
+    audio_file = request.files["file"]
+    r = sr.Recognizer()
+    with sr.AudioFile(audio_file) as source:
+        audio = r.record(source)
+    try:
+        text = r.recognize_google(audio)
+    except Exception as e:
+        return jsonify({"error": f"Speech recognition failed: {e}"}), 400
+    response = hecate.respond(text)
+    return jsonify({"transcript": text, "reply": response})
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hecate API server")
