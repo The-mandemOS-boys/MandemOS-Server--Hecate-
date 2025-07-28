@@ -23,6 +23,12 @@ def talk():
     data = request.json
     user_input = data.get("message", "")
     response = hecate.respond(user_input)
+    try:
+        with open("conversation.log", "a") as log:
+            log.write(f"User: {user_input}\n")
+            log.write(f"Hecate: {response}\n")
+    except Exception:
+        pass
     return jsonify({"reply": response})
 
 
