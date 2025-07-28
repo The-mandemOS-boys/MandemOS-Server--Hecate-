@@ -1,6 +1,7 @@
 import sys
 import io
 import os
+import shutil
 import requests
 from bs4 import BeautifulSoup
 import smtplib
@@ -76,6 +77,21 @@ class Hecate:
                 return self._create_file(filename, content)
             except Exception:
                 return f"{self.name}: Use 'create:filename|content'"
+
+        elif user_input.startswith("mkdir:"):
+            foldername = user_input.split("mkdir:", 1)[1].strip()
+            return self._create_folder(foldername)
+
+        elif user_input.startswith("mvdir:"):
+            try:
+                src, dest = user_input.split("mvdir:", 1)[1].split("|", 1)
+                return self._move_folder(src.strip(), dest.strip())
+            except ValueError:
+                return f"{self.name}: Use 'mvdir:source|destination'"
+
+        elif user_input.startswith("rmdir:"):
+            foldername = user_input.split("rmdir:", 1)[1].strip()
+            return self._delete_folder(foldername)
 
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
@@ -168,6 +184,27 @@ class Hecate:
             return f"{self.name}: Created file {filename}."
         except Exception as e:
             return f"{self.name}: Failed to create file:\n{e}"
+
+    def _create_folder(self, foldername):
+        try:
+            os.makedirs(foldername, exist_ok=True)
+            return f"{self.name}: Created folder {foldername}."
+        except Exception as e:
+            return f"{self.name}: Failed to create folder:\n{e}"
+
+    def _move_folder(self, src, dest):
+        try:
+            shutil.move(src, dest)
+            return f"{self.name}: Moved {src} to {dest}."
+        except Exception as e:
+            return f"{self.name}: Failed to move folder:\n{e}"
+
+    def _delete_folder(self, foldername):
+        try:
+            shutil.rmtree(foldername)
+            return f"{self.name}: Deleted folder {foldername}."
+        except Exception as e:
+            return f"{self.name}: Failed to delete folder:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()

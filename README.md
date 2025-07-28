@@ -47,6 +47,7 @@ Use the commands `email:recipient|subject|body` to send an email and `inbox:n` t
 ### File Utilities
 Use `retrieve:url|filename` to download a remote file into the `scripts/` folder.
 Use `create:filename|content` to create a file with optional content.
+Use `mkdir:folder` to create a folder, `mvdir:src|dest` to move it, and `rmdir:folder` to delete it.
 
 ### Location Tagging
 Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
