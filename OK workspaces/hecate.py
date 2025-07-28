@@ -3,6 +3,8 @@ import io
 import os
 import requests
 from bs4 import BeautifulSoup
+import json
+from json import JSONDecodeError
 
 os.makedirs("scripts", exist_ok=True)
 
@@ -12,6 +14,7 @@ class Hecate:
         self.personality = personality
         self.coder = coder
         self.memory_file = "memory.txt"
+        self.knowledge_file = "knowledge.json"
         self.last_code = ""
 
     def respond(self, user_input):
@@ -43,9 +46,16 @@ class Hecate:
             code_snippet = user_input.split("selfupdate:", 1)[1].strip()
             return self._self_update(code_snippet)
 
+        elif user_input.startswith("learn:"):
+            pair = user_input.split("learn:", 1)[1].strip()
+            return self._learn(pair)
+
         elif "code" in user_input.lower() and self.coder:
             return f"{self.name}: What kind of code would you like me to write for you?"
 
+        knowledge = self._load_knowledge()
+        if user_input in knowledge:
+            return f"{self.name}: {knowledge[user_input]}"
         else:
             return f"{self.name}: (In a {self.personality} tone) You said: \"{user_input}\""
 
@@ -114,3 +124,28 @@ class Hecate:
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
+
+    def _load_knowledge(self):
+        if os.path.exists(self.knowledge_file):
+            try:
+                with open(self.knowledge_file, "r") as f:
+                    return json.load(f)
+            except (JSONDecodeError, OSError):
+                # If the file is corrupted or unreadable, start fresh
+                return {}
+        return {}
+
+    def _save_knowledge(self, data):
+        with open(self.knowledge_file, "w") as f:
+            json.dump(data, f)
+
+    def _learn(self, pair):
+        if "|" not in pair:
+            return f"{self.name}: Please format learning as 'learn: question | answer'"
+        question, answer = pair.split("|", 1)
+        question = question.strip()
+        answer = answer.strip()
+        data = self._load_knowledge()
+        data[question] = answer
+        self._save_knowledge(data)
+        return f"{self.name}: I've learned the answer to '{question}'."
