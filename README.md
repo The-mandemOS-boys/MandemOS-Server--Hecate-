@@ -3,6 +3,9 @@
 
 > The daemon who codes, commits, and controls the flame of your GitHub repo.
 
+### Server Administration
+Colby Atcheson is the server administrator. Update `server_admins.json` to grant additional admin access.
+
 ### Usage
 1. Create a `config.json` file with your GitHub token and remote URL:
    ```json
