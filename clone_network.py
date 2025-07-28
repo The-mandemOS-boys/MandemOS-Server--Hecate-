@@ -2,6 +2,9 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from firewall import sanitize_text
+import sqlite3
+
+DB_NAME = 'mandemos.db'
 
 # Track keyword usage across clones
 KEYWORDS = {"glitch", "frequency", "vibration", "null"}
@@ -12,8 +15,25 @@ def _update_keyword_stats(clone_id, text):
     """Increment keyword counts for the given clone based on text."""
     words = text.lower().split()
     stats = keyword_stats.setdefault(clone_id, {k: 0 for k in KEYWORDS})
+    updates = {}
     for kw in KEYWORDS:
-        stats[kw] += sum(1 for w in words if kw in w)
+        inc = sum(1 for w in words if kw in w)
+        if inc:
+            stats[kw] += inc
+            updates[kw] = stats[kw]
+
+    if updates:
+        conn = sqlite3.connect(DB_NAME)
+        cur = conn.cursor()
+        for kw, count in updates.items():
+            cur.execute(
+                "INSERT INTO keyword_usage (clone_id, keyword, count) "
+                "VALUES (?, ?, ?) "
+                "ON CONFLICT(clone_id, keyword) DO UPDATE SET count=excluded.count",
+                (clone_id, kw, count),
+            )
+        conn.commit()
+        conn.close()
 
 app = Flask(__name__)
 CORS(app)
