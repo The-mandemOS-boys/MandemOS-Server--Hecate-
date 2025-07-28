@@ -35,6 +35,8 @@
   <h1>🕯️ Talk to Hecate</h1>
   <button onclick="startListening()">🎤 Speak</button>
   <select id="voiceSelect"></select>
+  <div id="serverResponses" style="white-space: pre-line; border: 1px solid #555; padding: 0.5em; width: 80%; max-width: 600px; margin: 1em auto;"></div>
+  <div id="cloneResponses" style="white-space: pre-line; border: 1px solid #555; padding: 0.5em; width: 80%; max-width: 600px; margin: 1em auto;"></div>
   <input type="text" id="textInput" placeholder="Type your message"/>
   <button onclick="sendText()">Send</button>
   <div id="log" style="white-space: pre-line; margin-bottom: 1em;"></div>
@@ -45,9 +47,18 @@
     <button onclick="emailLocation()">Email Location</button>
     <button onclick="summarizeMemory()">Summarize Memory</button>
     <button onclick="exitWindow()">❌ Exit</button>
-    <p><strong>Hecate:</strong> <span id="response"></span></p>
+  <p><strong>Hecate:</strong> <span id="response"></span></p>
 
   <script>
+    function appendReply(input, reply) {
+      const serverBox = document.getElementById("serverResponses");
+      const cloneBox = document.getElementById("cloneResponses");
+      if (input.trim().startsWith("clone:")) {
+        cloneBox.innerText += reply + "\n";
+      } else {
+        serverBox.innerText += reply + "\n";
+      }
+    }
     function startListening() {
       const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recognition.lang = 'en-US';
@@ -70,6 +81,7 @@
         document.getElementById("response").innerText = reply;
         logEl.innerText += `${reply}\n`;
         speak(reply);
+        appendReply(text, reply);
       };
 
       recognition.onerror = function(err) {
@@ -159,6 +171,7 @@
     const reply = data.reply;
     document.getElementById("response").innerText = reply;
     speak(reply);
+    appendReply(message, reply);
   }
 
   async function summarizeMemory() {
@@ -171,6 +184,7 @@
     const reply = data.reply;
     document.getElementById("response").innerText = reply;
     speak(reply);
+    appendReply("summarize", reply);
   }
 
     async function sendText() {
@@ -194,6 +208,7 @@
       document.getElementById("response").innerText = reply;
       logEl.innerText += `${reply}\n`;
       speak(reply);
+      appendReply(text, reply);
     }
 
     document.getElementById("textInput").addEventListener("keypress", function(e) {
@@ -217,11 +232,13 @@
         const intro = data.reply;
         document.getElementById("response").innerText = intro;
         speak(intro);
+        appendReply('', intro);
       })
       .catch(() => {
         const intro = 'Hecate: Who are you?';
         document.getElementById("response").innerText = intro;
         speak(intro);
+        appendReply('', intro);
       });
     });
   </script>
