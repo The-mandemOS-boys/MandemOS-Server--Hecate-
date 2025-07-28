@@ -99,6 +99,7 @@ Both the CLI tools and the API server automatically read the key from these loca
    ```bash
   python "OK workspaces/main.py"    # foreground
   python "OK workspaces/main.py" -b # background
+  python __main__.py -b              # same as above via module entry
   ```
 
    The server logs each conversation to `conversation.log` so you can read back the dialogue later.
@@ -174,7 +175,8 @@ python -m zipapp . -p '/usr/bin/env python3' -o hecate.pyz
 Run it with:
 
 ```bash
-python hecate.pyz
+python hecate.pyz          # foreground
+python hecate.pyz -b       # background
 ```
 
 This will start the API server directly from the zip file.
