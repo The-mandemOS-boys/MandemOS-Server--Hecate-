@@ -106,11 +106,14 @@ class Hecate:
             return f"{self.name}: I ran into an issue while searching:\n{e}"
 
     def _self_update(self, code_snippet):
-        """Append a code snippet to my own source file."""
+        """Append a code snippet to my own source file safely."""
         try:
             my_path = os.path.abspath(__file__)
+            snippet = "\nif __name__ == '__main__':\n"
+            for line in code_snippet.splitlines():
+                snippet += f"    {line}\n"
             with open(my_path, "a") as f:
-                f.write("\n" + code_snippet + "\n")
+                f.write(snippet)
             return f"{self.name}: I've added the provided code to my source file."
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
