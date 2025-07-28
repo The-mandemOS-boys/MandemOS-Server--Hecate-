@@ -169,5 +169,24 @@ Use `selfrepair:description` to attempt an automated fix of Hecate's own code ba
 Run `antivirus.py` to periodically scan the `scripts/` directory for infected files using `clamscan`. The script also attempts to keep the ClamAV virus definitions up to date by calling `freshclam` at regular intervals. Any detected threats are moved to the `quarantine/` folder. Ensure both `clamscan` and `freshclam` are installed so the scan and updates can run successfully.
 
 ### MandemOS Database
-Run `python setup_database.py` to create a SQLite database named `mandemos.db` with tables for scrolls, relics, and keys.
+Run `python setup_database.py` to create a SQLite database named `mandemos.db` with tables for scrolls, relics, keys, and keyword usage statistics.
+
+After running the clone network, you can capture the current keyword usage by
+executing:
+
+```bash
+python keyword_stats_to_db.py
+```
+
+This script queries the `/keywords` endpoint of the clone network (controlled by
+`CLONE_SERVER_URL`) and updates the `keyword_usage` table with the latest counts.
+If the network cannot be reached, the script simply prints an error and exits without modifying the database.
+
+To inspect the stored keyword statistics, run:
+
+```bash
+python read_keyword_usage.py
+```
+
+This command prints the contents of the `keyword_usage` table so you can verify what each clone has reported.
 
