@@ -9,6 +9,7 @@ import email
 from email.mime.text import MIMEText
 import openai
 import subprocess
+from self_improvement_lattice import SelfImprovementLattice
 
 # Allow overriding the OpenAI model via environment variable. Default to gpt-4o
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
@@ -63,6 +64,7 @@ class Hecate:
         self.admin_password = os.getenv("ADMIN_PASSWORD", "whostheboss")
         self.admin_file = "admin_status.txt"
         self._load_admin_status()
+        self.lattice = SelfImprovementLattice()
 
     def startup_message(self):
         """Return the initial prompt asking for the user's identity."""
@@ -216,6 +218,30 @@ class Hecate:
 
         elif user_input.strip() == "clone:memories":
             return self._clone_memories()
+
+        elif user_input.strip() == "lattice:show":
+            return self.lattice.list_tasks()
+
+        elif user_input.startswith("lattice:add:"):
+            try:
+                category, task = user_input.split("lattice:add:", 1)[1].split("|", 1)
+                self.lattice.add_task(category.strip(), task.strip())
+                return f"{self.name}: Improvement task added."
+            except ValueError:
+                return f"{self.name}: Use 'lattice:add:category|task'"
+
+        elif user_input.startswith("lattice:complete:"):
+            try:
+                category, num = user_input.split("lattice:complete:", 1)[1].split("|", 1)
+                if self.lattice.complete_task(category.strip(), int(num) - 1):
+                    return f"{self.name}: Task marked complete."
+                return f"{self.name}: Task not found."
+            except ValueError:
+                return f"{self.name}: Use 'lattice:complete:category|number'"
+
+        elif user_input.strip() == "lattice:reset":
+            self.lattice.reset()
+            return f"{self.name}: Lattice reset."
 
         elif any(p in user_input.lower() for p in self.distress_phrases) or "alika in distress" in user_input.lower():
             to = os.getenv("DISTRESS_EMAIL")
