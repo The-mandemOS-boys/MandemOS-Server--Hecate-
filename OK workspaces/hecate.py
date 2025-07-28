@@ -142,6 +142,14 @@ class Hecate:
             code_snippet = user_input.split("selfupdate:", 1)[1].strip()
             return self._self_update(code_snippet)
 
+        elif user_input.startswith("selfrepair:"):
+            desc = user_input.split("selfrepair:", 1)[1].strip()
+            return self._self_repair(desc)
+
+        elif user_input.startswith("selfimprove:"):
+            desc = user_input.split("selfimprove:", 1)[1].strip()
+            return self._self_improve(desc)
+
         elif user_input.startswith("email:"):
             try:
                 to, subject, body = user_input.split("email:", 1)[1].split("|", 2)
@@ -376,6 +384,62 @@ class Hecate:
         except Exception as e:
             return f"{self.name}: Failed to update myself:\n{e}"
 
+    def _self_repair(self, description):
+        """Attempt to repair my source file using ChatGPT."""
+        if not openai.api_key:
+            return f"{self.name}: OpenAI API key not configured."
+        try:
+            my_path = os.path.abspath(__file__)
+            with open(my_path, "r") as f:
+                current = f.read()
+            prompt = (
+                "You are an automated repair system. "
+                "Given the following Python code:\n" + current + "\n\n" +
+                "Problem description: " + description + "\n\n" +
+                "Return the full corrected code."
+            )
+            resp = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            new_code = resp.choices[0].message["content"].strip()
+            backup_path = my_path + ".bak"
+            with open(backup_path, "w") as b:
+                b.write(current)
+            with open(my_path, "w") as f:
+                f.write(new_code)
+            return f"{self.name}: Self-repair attempted. Backup at {backup_path}."
+        except Exception as e:
+            return f"{self.name}: Failed to repair myself:\n{e}"
+
+    def _self_improve(self, suggestion):
+        """Attempt to refactor my source file based on a suggestion."""
+        if not openai.api_key:
+            return f"{self.name}: OpenAI API key not configured."
+        try:
+            my_path = os.path.abspath(__file__)
+            with open(my_path, "r") as f:
+                current = f.read()
+            prompt = (
+                "You are an automated refactoring tool. "
+                "Improve the following Python code based on this suggestion: "
+                + suggestion + "\n\nCODE:\n" + current + "\n\n" +
+                "Return the full updated code."
+            )
+            resp = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            new_code = resp.choices[0].message["content"].strip()
+            backup_path = my_path + ".bak"
+            with open(backup_path, "w") as b:
+                b.write(current)
+            with open(my_path, "w") as f:
+                f.write(new_code)
+            return f"{self.name}: Self-improvement attempted. Backup at {backup_path}."
+        except Exception as e:
+            return f"{self.name}: Failed to improve myself:\n{e}"
+
     def _send_email(self, to_addr, subject, body):
         if not (self.gmail_user and self.gmail_pass):
             return f"{self.name}: Gmail credentials not configured."
@@ -448,6 +512,8 @@ class Hecate:
         return data if data else f"{self.name}: (no memories)"
 
     def _chatgpt_response(self, text):
+        if not openai.api_key:
+            return f"{self.name}: OpenAI API key not configured."
         try:
             resp = openai.ChatCompletion.create(
                 model=OPENAI_MODEL,
