@@ -77,6 +77,10 @@ class Hecate:
             except Exception:
                 return f"{self.name}: Use 'create:filename|content'"
 
+        elif user_input.startswith("delete:"):
+            filename = user_input.split("delete:", 1)[1].strip()
+            return self._delete_file(filename)
+
         elif user_input.startswith("search:"):
             query = user_input.split("search:", 1)[1].strip()
             return self._search_web(query)
@@ -168,6 +172,17 @@ class Hecate:
             return f"{self.name}: Created file {filename}."
         except Exception as e:
             return f"{self.name}: Failed to create file:\n{e}"
+
+    def _delete_file(self, filename):
+        """Remove a file from the scripts folder."""
+        path = os.path.join("scripts", filename)
+        if not os.path.exists(path):
+            return f"{self.name}: I couldn\u2019t find a file named {filename}."
+        try:
+            os.remove(path)
+            return f"{self.name}: Deleted {filename}."
+        except Exception as e:
+            return f"{self.name}: Failed to delete file:\n{e}"
 
     def _run_code(self, code):
         buffer = io.StringIO()
