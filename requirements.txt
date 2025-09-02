@@ -4,5 +4,6 @@ requests
 beautifulsoup4
 openai
 SpeechRecognition
-PyAudio
+# PyAudio        # comment out for Render; keep locally if you need mic input
 psutil
+gunicorn
