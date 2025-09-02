@@ -6,4 +6,4 @@ openai
 SpeechRecognition
 # PyAudio        # comment out for Render; keep locally if you need mic input
 psutil
-gunicorn
+gunicorn==20.1.0
